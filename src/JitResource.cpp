@@ -136,9 +136,11 @@ namespace Jit {
     std::string clearWhiteSpace(const std::string &input) {
         std::string result;
 
+        char lastChar = ' ';
         for (char c:input) {
-            if ((c > ' ') && (c < '~'))
+            if (((c > ' ') && (c < '~')) || (lastChar == '\\'))
                 result.push_back(c);
+            lastChar = c;
         }
 
         return result;
