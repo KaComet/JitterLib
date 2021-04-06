@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-namespace walt::UI {
+namespace Jit {
     // For specifying a char/pic that is used to display an object.
     typedef unsigned int FrameID;
 

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <SDL.h>
 #include <string>
-#include "../src/SpriteSet.h"
-#include "../src/ltimer.h"
+#include "../src/JitSpriteSet.h"
+#include "../src/JitLTimer.h"
 #include <SDL_image.h>
 
 // An example path would be "/basic/tileset.png"
@@ -21,14 +21,14 @@ SDL_Renderer *gRenderer = nullptr;
 
 bool init(int windowWidth, int windowHeight);
 
-bool loadSpriteSetFromFile(SDL_Renderer *renderer, SpriteSet &spriteSet, const std::string &fileName, bool usingSimpleResourcePath);
+bool loadSpriteSetFromFile(SDL_Renderer *renderer, Jit::JitSpriteSet &spriteSet, const std::string &fileName, bool usingSimpleResourcePath);
 
 void printTileNumber(int x, int y, int tileWidth, int tileHeight, int tilesPerRow);
 
 int main(int argc, char *argv[]) {
     std::string path;
     int windowWidth = 10, windowHeight = 10;
-    SpriteSet sprites;
+    Jit::JitSpriteSet sprites;
 
     /* Get the args. The last arg will be the
      *   resource path to the spriteset. */
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 
     // Create a timer to regulate the FPS. Without this, the application
     //   will render as fast as possible. This would waste system resources.
-    LTimer fpsReg;
+    Jit::JitLTimer fpsReg;
 
     // Main loop flag
     bool quit = false;
@@ -170,17 +170,17 @@ bool init(int windowWidth, int windowHeight) {
     return success;
 }
 
-bool loadSpriteSetFromFile(SDL_Renderer *renderer, SpriteSet &spriteSet, const std::string &fileName, bool usingSimpleResourcePath) {
+bool loadSpriteSetFromFile(SDL_Renderer *renderer, Jit::JitSpriteSet &spriteSet, const std::string &fileName, bool usingSimpleResourcePath) {
     // Check if all the provided pointers are valid. If not, return false.
     if (fileName.empty())
         return false;
 
     printf("Loading tiles...\n");
 
-    // Get the path of the SpriteSet and load it.
+    // Get the path of the JitSpriteSet and load it.
     std::string path = "";
     if (usingSimpleResourcePath) {
-        path = getResourcePath("") + fileName;
+        path = Jit::getResourcePath("") + fileName;
     } else {
         path = fileName;
     }

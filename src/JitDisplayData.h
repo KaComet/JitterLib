@@ -1,15 +1,15 @@
 #ifndef SHEER_DISPLAYDATA_H
 #define SHEER_DISPLAYDATA_H
 
-#include "Basics.h"
-#include "Tile.h"
+#include "JitBasics.h"
+#include "JitDisplayTile.h"
 #include <stdexcept>
 #include <HappyArray.h>
 #include <vector>
 #include <FlatTypes.h>
 #include <FlatMath.h>
 
-namespace walt::Display {
+namespace Jit {
 
     enum class Status {
         Dead,
@@ -44,21 +44,20 @@ namespace walt::Display {
     struct entityDisplayInfo {
         std::string Name, Type;
         flat::IntegerCoordinate position;
-        EID eid;
         std::vector<Status> statuses;
         RelativeFlag flag;
     };
 
-    class DisplayData {
+    class JitDisplayData {
     public:
-        DisplayData();
+        JitDisplayData();
 
-        explicit DisplayData(flat::CoordinateAndRectangle area);
+        explicit JitDisplayData(flat::CoordinateAndRectangle area);
 
-        DisplayData &operator=(const DisplayData &other);
+        JitDisplayData &operator=(const JitDisplayData &other);
 
         // Returns the tile at the given coordinate.
-        walt::core::Tile &at(flat::IntegerCoordinate cord);
+        Jit::JitDisplayTile &at(flat::IntegerCoordinate cord);
 
         [[nodiscard]] flat::CoordinateAndRectangle area() const noexcept;
 
@@ -69,7 +68,7 @@ namespace walt::Display {
     private:
         flat::CoordinateAndRectangle _area;
         std::vector<entityDisplayInfo> _entities;
-        flat::HappyArray<walt::core::Tile> _tiles;
+        flat::HappyArray<Jit::JitDisplayTile> _tiles;
         flat::CoordinateAndRectangle _bufferedArea;
         unsigned int _totalArea;
     };

@@ -19,28 +19,26 @@ include_directories(${SDL2_IMAGE_INCLUDE_DIRS}
         ${CMAKE_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}/include)
 
-add_subdirectory(src)
-
-set(JitterLibFiles src/ColorList.h
-        src/ColorList.cpp
-        src/resource.h
-        src/resource.cpp
-        src/LTexture.h
-        src/LTexture.cpp
-        src/ltimer.h
-        src/ltimer.cpp
-        src/SpriteInteractionsList.h
-        src/SpriteInteractionsList.cpp
-        src/SpriteSet.h
-        src/SpriteSet.cpp
-        src/UIBasics.h
-        src/FrameDefMap.cpp
-        src/FrameDefMap.h
-        src/Tile.h
-        src/Material.h
-        src/DisplayData.h
-        src/DisplayData.cpp
-        src/Basics.h)
+set(JitterLibFiles src/JitColorList.h
+        src/JitColorList.cpp
+        src/JitResource.h
+        src/JitResource.cpp
+        src/JitLTexture.h
+        src/JitLTexture.cpp
+        src/JitLTimer.h
+        src/JitLTimer.cpp
+        src/JitSpriteInteractionsList.h
+        src/JitSpriteInteractionsList.cpp
+        src/JitSpriteSet.h
+        src/JitSpriteSet.cpp
+        src/JitUIBasics.h
+        src/JitFrameDefMap.cpp
+        src/JitFrameDefMap.h
+        src/JitDisplayTile.h
+        src/JitDisplayMaterial.h
+        src/JitDisplayData.h
+        src/JitDisplayData.cpp
+        src/JitBasics.h)
 
 set(Flat include/FlatMath.h
         include/FlatTypes.h
