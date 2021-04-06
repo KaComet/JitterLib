@@ -25,7 +25,7 @@ namespace Jit {
             }
             //We replace the last bin/ with res/ to get the the resource path
             size_t pos = baseRes.rfind("bin");
-            baseRes = baseRes.substr(0, pos) + "resource" + PATH_SEP;
+            baseRes = baseRes.substr(0, pos);
         }
         //If we want a specific subdirectory path in the resource directory
         //append it to the base path. This would be something like Lessons/res/Lesson0
@@ -66,7 +66,6 @@ namespace Jit {
         uint capsuleStartCount = 0;
         uint capsuleEndCount = 0;
         int currentCapsuleNumber = -1;
-        size_t beginPos = 0, endPos = 0;
         bool isInCapsule = false, enteringCapsule = false, exitingCapsule = false;
 
         // Scan through every character in the input.
