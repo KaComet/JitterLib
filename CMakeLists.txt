@@ -17,7 +17,7 @@ include_directories(${SDL2_IMAGE_INCLUDE_DIRS}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2main_INCLUDE_DIRS}
         ${CMAKE_BINARY_DIR}
-        ${CMAKE_SOURCE_DIR}/include)
+        ${CMAKE_SOURCE_DIR}/include/FlatLib)
 
 set(JitterLibFiles src/JitColorList.h
         src/JitColorList.cpp
@@ -40,14 +40,14 @@ set(JitterLibFiles src/JitColorList.h
         src/JitDisplayData.cpp
         src/JitBasics.h)
 
-set(Flat include/FlatMath.h
-        include/FlatTypes.h
-        include/FlatTypes.cpp
-        include/FlatMath.cpp
-        include/FlatTypes.h
-        include/FlatTypes.cpp
-        include/FlatVector.h
-        include/HappyArray.h)
+set(Flat include/FlatLib/FlatMath.h
+        include/FlatLib/FlatTypes.h
+        include/FlatLib/FlatTypes.cpp
+        include/FlatLib/FlatMath.cpp
+        include/FlatLib/FlatTypes.h
+        include/FlatLib/FlatTypes.cpp
+        include/FlatLib/FlatVector.h
+        include/FlatLib/HappyArray.h)
 
 add_executable(JitterLib_TilesetViewerMain Examples/TilesetViewerMain.cpp ${JitterLibFiles} ${Flat})
 target_link_libraries(JitterLib_TilesetViewerMain ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES})

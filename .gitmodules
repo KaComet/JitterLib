@@ -1,0 +1,3 @@
+[submodule "include/FlatLib"]
+	path = include/FlatLib
+	url = https://github.com/KaComet/FlatLib
