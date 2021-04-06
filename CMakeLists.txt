@@ -51,3 +51,6 @@ set(Flat include/FlatMath.h
 
 add_executable(JitterLib_TilesetViewerMain Examples/TilesetViewerMain.cpp ${JitterLibFiles} ${Flat})
 target_link_libraries(JitterLib_TilesetViewerMain ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES})
+
+add_executable(JitterLib_SimpleLoad Examples/SimpleLoad.cpp ${JitterLibFiles} ${Flat})
+target_link_libraries(JitterLib_SimpleLoad ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES})
