@@ -18,7 +18,7 @@ namespace Jit {
         //Renders texture at given point
         void render(int x, int y) const;
 
-        void renderPortion(SDL_Rect &portion, SDL_Rect &renderSection) const;
+        void renderPortion(SDL_Rect &portion, SDL_Rect &renderSection, double angle = 0.00, SDL_RendererFlip flip = SDL_FLIP_NONE) const;
 
         //Gets image dimensions
         [[nodiscard]] int getWidth() const;

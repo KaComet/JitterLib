@@ -62,7 +62,7 @@ namespace Jit {
     }
 
 // Renders the specified sprite. If the specified sprite is not loaded, the function returns false.
-    bool JitSpriteSet::render(unsigned int x, unsigned int y, Jit::FrameID valueToDisplay) const {
+    bool JitSpriteSet::render(unsigned int x, unsigned int y, Jit::FrameID valueToDisplay, double rotation, SDL_RendererFlip flip) const {
         // If the JitSpriteSet is not loaded, return false.
         if ((mBitmap == nullptr) || (valueToDisplay >= nTiles))
             return false;
@@ -88,7 +88,7 @@ namespace Jit {
         limit.y = (int) y;
 
         // Render the sprite to the screen.
-        mBitmap->renderPortion(mask, limit);
+        mBitmap->renderPortion(mask, limit, rotation, flip);
 
         return true;
     }

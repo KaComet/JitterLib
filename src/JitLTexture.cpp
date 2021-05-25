@@ -106,7 +106,7 @@ namespace Jit {
         SDL_SetTextureColorMod(mTexture, color.r, color.g, color.b);
     }
 
-    void JitLTexture::renderPortion(SDL_Rect &portion, SDL_Rect &renderSection) const {
-        SDL_RenderCopyEx(mRenderer, mTexture, &portion, &renderSection, 0.00, nullptr, SDL_FLIP_NONE);
+    void JitLTexture::renderPortion(SDL_Rect &portion, SDL_Rect &renderSection, const double angle, const SDL_RendererFlip flip) const {
+        SDL_RenderCopyEx(mRenderer, mTexture, &portion, &renderSection, angle, nullptr, flip);
     }
 }
