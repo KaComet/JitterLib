@@ -10,42 +10,26 @@ namespace Jit {
 
     JitSpriteSet::~JitSpriteSet() {
         // Free any loaded textures.
-        this->free();
+        free();
     }
 
-    bool JitSpriteSet::loadFromFile(SDL_Renderer *renderer, const std::string &path, uint tileWidth, uint tileHeight) {
+    bool JitSpriteSet::loadFromFile(const std::string &path, uint tileWidth, uint tileHeight) {
         // Check if all the provided pointers are valid. If not, return false.
-        if (!renderer || path.empty())
+        if (path.empty())
             return false;
-
-        printf("Loading tiles...\n");
-
 
         // Free any previously used resources.
         free();
 
-        // Create the texture, set its renderer, and load the JitSpriteSet from the given path.
-        mBitmap = JitLTexture();
-        mBitmap.setRenderer(renderer);
-        if (!(mBitmap.loadFromFile(path))) {
-            return false;
-        }
-
-        // If the JitSpriteSet is not formatted correctly, free and return zero;
-        if (((mBitmap.getHeight() % tileHeight) != 0) || ((mBitmap.getWidth() % tileWidth) != 0)) {
-            std::cout << std::endl << "Bad dem. Source height % tile Height = "
-                      << mBitmap.getHeight() % tileHeight << " Source width % tile width = "
-                      << mBitmap.getWidth() % tileWidth << std::endl;
-            free();
-            return false;
-        }
-
-        // Set the width, height, and number of tiles.
         fontWidth = tileWidth;
         fontHeight = tileHeight;
-        nTiles = ((mBitmap.getWidth() / tileWidth) * (mBitmap.getHeight() / tileHeight));
 
-        printf("   Loaded %u tiles\n", nTiles);
+        // Create the texture, set its renderer, and load the JitSpriteSet from the given path.
+        if (!(mBitmap.setPath(path))) {
+            return false;
+        }
+
+        load();
 
         // Return the number of tiles loaded.
         return true;
@@ -58,9 +42,9 @@ namespace Jit {
     }
 
 // Renders the specified sprite. If the specified sprite is not loaded, the function returns false.
-    bool JitSpriteSet::render(unsigned int x, unsigned int y, Jit::FrameID valueToDisplay, double rotation, SDL_RendererFlip flip) const {
-        // If the JitSpriteSet is not loaded, return false.
-        if ((mBitmap.getHeight() == 0) || (mBitmap.getWidth() == 0) || (valueToDisplay >= nTiles))
+    bool JitSpriteSet::render(unsigned int x, unsigned int y, Jit::FrameID valueToDisplay, double rotation,
+                              SDL_RendererFlip flip) const {
+        if (valueToDisplay >= nTiles)
             return false;
 
         // Calculate the specified tiles position in the JitSpriteSet.
@@ -91,9 +75,6 @@ namespace Jit {
 
 // Renders the specified frame in the given color. If the specified sprite is not loaded, the function returns false.
     bool JitSpriteSet::render(unsigned int x, unsigned int y, Jit::FrameID frameToDisplay, SDL_Color renderColor) {
-        if ((mBitmap.getHeight() == 0) || (mBitmap.getWidth() == 0))
-            return false;
-
         // Store the old color mod so it can be restored after rendering.
         const SDL_Color oldColorMod = mBitmap.getModColor();
 
@@ -101,7 +82,7 @@ namespace Jit {
         setColor(renderColor);
 
         // Render the texture, storing whether or not rendering was successful.
-        const bool wasRenderSuccessful = this->render(x, y, frameToDisplay);
+        const bool wasRenderSuccessful = render(x, y, frameToDisplay);
 
         // Reset the texture's color mod to it's old value.
         mBitmap.setModColor(oldColorMod);
@@ -119,9 +100,6 @@ namespace Jit {
     }
 
     void JitSpriteSet::setColor(const SDL_Color &color) {
-        if ((mBitmap.getHeight() == 0) || (mBitmap.getWidth() == 0))
-            return;
-
         mBitmap.setModColor(color);
     }
 
@@ -131,5 +109,32 @@ namespace Jit {
 
     void JitSpriteSet::setRenderer(SDL_Renderer *renderer) {
         mBitmap.setRenderer(renderer);
+
+        load();
+    }
+
+    bool JitSpriteSet::load() {
+        if (!mBitmap.isTextureLoaded()) {
+            nTiles = 0;
+            return false;
+        }
+
+        printf("Loading tiles...\n");
+
+        // If the JitSpriteSet is not formatted correctly, free and return zero;
+        if (((mBitmap.getHeight() % fontHeight) != 0) || ((mBitmap.getWidth() % fontWidth) != 0)) {
+            std::cout << std::endl << "Bad dem. Source height % tile Height = "
+                      << mBitmap.getHeight() % fontHeight << " Source width % tile width = "
+                      << mBitmap.getWidth() % fontWidth << std::endl;
+            free();
+            return false;
+        }
+
+        // Set the number of tiles.
+        nTiles = ((mBitmap.getWidth() / fontWidth) * (mBitmap.getHeight() / fontHeight));
+
+        printf("   Loaded %u tiles\n", nTiles);
+
+        return true;
     }
 }

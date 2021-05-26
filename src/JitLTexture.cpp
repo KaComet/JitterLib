@@ -3,6 +3,7 @@
 namespace Jit {
     JitLTexture::JitLTexture() {
         //Initialize
+        loaded = false;
         mTexture = nullptr;
         mRenderer = nullptr;
         mSurface = nullptr;
@@ -15,41 +16,29 @@ namespace Jit {
         free();
     }
 
-    bool JitLTexture::loadFromFile(const std::string &path) {
-        //Get rid of preexisting texture
-        free();
-
-        //Load image at specified path
-        mSurface = IMG_Load(path.c_str());
-
-        if (mSurface == nullptr) {
-            printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-            return false;
-        } else {
-            LoadFromSurface(path);
+    void JitLTexture::free() {
+        if (mSurface) {
+            SDL_FreeSurface(mSurface);
+            mSurface = nullptr;
         }
 
-        //Return success
-        return true;
-    }
-
-    void JitLTexture::free() {
         //Free texture if it exists
         if (mTexture) {
             SDL_DestroyTexture(mTexture);
             mTexture = nullptr;
-            mWidth = 0;
-            mHeight = 0;
         }
 
-        if (mSurface)
-            SDL_FreeSurface(mSurface);
+        mWidth = 0;
+        mHeight = 0;
+        loaded = false;
     }
 
     void JitLTexture::render(int x, int y) const {
-        //Set rendering space and render to screen
-        SDL_Rect renderRectangle = {x, y, mWidth, mHeight};
-        SDL_RenderCopy(mRenderer, mTexture, nullptr, &renderRectangle);
+        if (loaded) {
+            //Set rendering space and render to screen
+            SDL_Rect renderRectangle = {x, y, mWidth, mHeight};
+            SDL_RenderCopy(mRenderer, mTexture, nullptr, &renderRectangle);
+        }
     }
 
     int JitLTexture::getWidth() const {
@@ -84,41 +73,30 @@ namespace Jit {
 
         mRenderer = renderer;
 
+        loaded = tryLoad();
+
         return true;
     }
 
     void JitLTexture::setModColor(const SDL_Color &color) {
-        //Modulate texture
-        SDL_SetTextureColorMod(mTexture, color.r, color.g, color.b);
+        if (loaded) {
+            //Modulate texture
+            SDL_SetTextureColorMod(mTexture, color.r, color.g, color.b);
+        }
     }
 
     void JitLTexture::renderPortion(SDL_Rect &portion, SDL_Rect &renderSection, const double angle,
                                     const SDL_RendererFlip flip) const {
-        SDL_RenderCopyEx(mRenderer, mTexture, &portion, &renderSection, angle, nullptr, flip);
+        if (loaded)
+            SDL_RenderCopyEx(mRenderer, mTexture, &portion, &renderSection, angle, nullptr, flip);
     }
 
     JitLTexture::JitLTexture(const JitLTexture &other) {
         if (this != &other) {
-            if (other.mSurface) {
-                mRenderer = other.mRenderer;
-                mSurface = SDL_ConvertSurface(other.mSurface, other.mSurface->format, 0);
-                LoadFromSurface("COPY:OTHER_TEXTURE");
-            }
-        }
-    }
+            path = other.path;
+            mRenderer = other.mRenderer;
 
-    void JitLTexture::LoadFromSurface(const std::string &path) {
-        //Color key image
-        SDL_SetColorKey(mSurface, SDL_TRUE, SDL_MapRGB(mSurface->format, 0, 0, 0));
-
-        //Create texture from surface pixels
-        mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
-        if (mTexture == nullptr) {
-            printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-        } else {
-            //Get image dimensions
-            mWidth = mSurface->w;
-            mHeight = mSurface->h;
+            loaded = tryLoad();
         }
     }
 
@@ -126,18 +104,57 @@ namespace Jit {
         if (this == &other)
             return *this;
 
-        //free();
+        free();
 
-        if (other.mSurface) {
-            mSurface = SDL_ConvertSurface(other.mSurface, other.mSurface->format, 0);
-            LoadFromSurface("COPY:OTHER_TEXTURE");
-            mRenderer = other.mRenderer;
-        } else {
-            mTexture = nullptr;
-            mRenderer = nullptr;
-            mSurface = nullptr;
-        }
+        path = other.path;
+        mRenderer = other.mRenderer;
+
+        loaded = tryLoad();
 
         return *this;
+    }
+
+    bool JitLTexture::setPath(const std::string &pathh) {
+        path = pathh;
+
+        loaded = tryLoad();
+
+        return true;
+    }
+
+    bool JitLTexture::tryLoad() {
+        if (mRenderer && path.has_value()) {
+            //Get rid of preexisting texture
+            free();
+
+            //Load image at specified path
+            mSurface = IMG_Load(path.value().c_str());
+
+            if (mSurface == nullptr) {
+                printf("Unable to load image %s! SDL_image Error: %s\n", path.value().c_str(), IMG_GetError());
+                return false;
+            } else {
+                //Color key image
+                SDL_SetColorKey(mSurface, SDL_TRUE, SDL_MapRGB(mSurface->format, 0, 0, 0));
+
+                //Create texture from surface pixels
+                mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
+                if (mTexture == nullptr) {
+                    printf("Unable to create texture from %s! SDL Error: %s\n", path.value().c_str(), SDL_GetError());
+                } else {
+                    //Get image dimensions
+                    mWidth = mSurface->w;
+                    mHeight = mSurface->h;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool JitLTexture::isTextureLoaded() const {
+        return loaded;
     }
 }

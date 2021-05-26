@@ -18,7 +18,7 @@ namespace Jit {
         ~JitSpriteSet();
 
         // Loads image at specified path. Returns the number of tiles loaded.
-        bool loadFromFile(SDL_Renderer *renderer, const std::string &path, uint tileWidth, uint tileHeight);
+        bool loadFromFile(const std::string &path, uint tileWidth, uint tileHeight);
 
         // Renders texture at given point.
         bool render(unsigned int x, unsigned int y, Jit::FrameID valueToDisplay, double rotation = 0.00, SDL_RendererFlip flip = SDL_FLIP_NONE) const;
@@ -40,9 +40,11 @@ namespace Jit {
         //Deallocates texture
         void free();
 
+        bool load();
+
         //The font texture
         JitLTexture mBitmap;
-        uint fontWidth, fontHeight, nTiles;
+        uint fontWidth = 0, fontHeight = 0, nTiles = 0;
     };
 }
 
