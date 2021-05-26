@@ -3,9 +3,11 @@
 
 #include <SDL.h>
 #include <string>
+#include <memory>
 #include "JitLTexture.h"
 #include "JitResource.h"
 #include <SDL_image.h>
+#include <optional>
 #include "JitUIBasics.h"
 
 namespace Jit {
@@ -39,7 +41,7 @@ namespace Jit {
         void free();
 
         //The font texture
-        JitLTexture *mBitmap;
+        JitLTexture mBitmap;
         uint fontWidth, fontHeight, nTiles;
     };
 }

@@ -5,12 +5,18 @@
 #include <string>
 #include <SDL_image.h>
 #include <iostream>
+#include <optional>
+
 namespace Jit {
     class JitLTexture {
     public:
         JitLTexture();
 
         ~JitLTexture();
+
+        JitLTexture(const JitLTexture& other); // Copy constructor
+
+        JitLTexture& operator=(const JitLTexture& other); // Copy assignment
 
         //Loads image at specified path
         bool loadFromFile(const std::string &path);
@@ -35,8 +41,11 @@ namespace Jit {
         //Deallocates texture
         void free();
 
+        void LoadFromSurface(const std::string& path);
+
         //The actual hardware texture
         SDL_Texture *mTexture;
+        SDL_Surface *mSurface;
         SDL_Renderer *mRenderer;
 
         //Image dimensions

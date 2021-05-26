@@ -3,7 +3,6 @@
 namespace Jit {
     JitSpriteSet::JitSpriteSet() {
         //Initialize variables
-        mBitmap = nullptr;
         nTiles = 0;
         fontWidth = 0;
         fontHeight = 0;
@@ -26,18 +25,17 @@ namespace Jit {
         free();
 
         // Create the texture, set its renderer, and load the JitSpriteSet from the given path.
-        mBitmap = new JitLTexture;
-        mBitmap->setRenderer(renderer);
-        if (!(mBitmap->loadFromFile(path))) {
-            free();
+        mBitmap = JitLTexture();
+        mBitmap.setRenderer(renderer);
+        if (!(mBitmap.loadFromFile(path))) {
             return false;
         }
 
         // If the JitSpriteSet is not formatted correctly, free and return zero;
-        if (((mBitmap->getHeight() % tileHeight) != 0) || ((mBitmap->getWidth() % tileWidth) != 0)) {
+        if (((mBitmap.getHeight() % tileHeight) != 0) || ((mBitmap.getWidth() % tileWidth) != 0)) {
             std::cout << std::endl << "Bad dem. Source height % tile Height = "
-                      << mBitmap->getHeight() % tileHeight << " Source width % tile width = "
-                      << mBitmap->getWidth() % tileWidth << std::endl;
+                      << mBitmap.getHeight() % tileHeight << " Source width % tile width = "
+                      << mBitmap.getWidth() % tileWidth << std::endl;
             free();
             return false;
         }
@@ -45,7 +43,7 @@ namespace Jit {
         // Set the width, height, and number of tiles.
         fontWidth = tileWidth;
         fontHeight = tileHeight;
-        nTiles = ((mBitmap->getWidth() / tileWidth) * (mBitmap->getHeight() / tileHeight));
+        nTiles = ((mBitmap.getWidth() / tileWidth) * (mBitmap.getHeight() / tileHeight));
 
         printf("   Loaded %u tiles\n", nTiles);
 
@@ -56,20 +54,18 @@ namespace Jit {
 // Frees any currently loaded resources.
     void JitSpriteSet::free() {
         // Delete any loaded JitSpriteSet and set the number of tiles to zero.
-        delete mBitmap;
-        mBitmap = nullptr;
         nTiles = 0;
     }
 
 // Renders the specified sprite. If the specified sprite is not loaded, the function returns false.
     bool JitSpriteSet::render(unsigned int x, unsigned int y, Jit::FrameID valueToDisplay, double rotation, SDL_RendererFlip flip) const {
         // If the JitSpriteSet is not loaded, return false.
-        if ((mBitmap == nullptr) || (valueToDisplay >= nTiles))
+        if ((mBitmap.getHeight() == 0) || (mBitmap.getWidth() == 0) || (valueToDisplay >= nTiles))
             return false;
 
         // Calculate the specified tiles position in the JitSpriteSet.
         unsigned int xPos, yPos, nTilesPerRow;
-        nTilesPerRow = mBitmap->getWidth() / fontWidth;
+        nTilesPerRow = mBitmap.getWidth() / fontWidth;
         xPos = (valueToDisplay % nTilesPerRow) * fontWidth;
         yPos = (valueToDisplay / nTilesPerRow) * fontHeight;
 
@@ -88,18 +84,18 @@ namespace Jit {
         limit.y = (int) y;
 
         // Render the sprite to the screen.
-        mBitmap->renderPortion(mask, limit, rotation, flip);
+        mBitmap.renderPortion(mask, limit, rotation, flip);
 
         return true;
     }
 
 // Renders the specified frame in the given color. If the specified sprite is not loaded, the function returns false.
     bool JitSpriteSet::render(unsigned int x, unsigned int y, Jit::FrameID frameToDisplay, SDL_Color renderColor) {
-        if (!mBitmap)
+        if ((mBitmap.getHeight() == 0) || (mBitmap.getWidth() == 0))
             return false;
 
         // Store the old color mod so it can be restored after rendering.
-        const SDL_Color oldColorMod = mBitmap->getModColor();
+        const SDL_Color oldColorMod = mBitmap.getModColor();
 
         // Set the texture's color mod to the new color mod.
         setColor(renderColor);
@@ -108,7 +104,7 @@ namespace Jit {
         const bool wasRenderSuccessful = this->render(x, y, frameToDisplay);
 
         // Reset the texture's color mod to it's old value.
-        mBitmap->setModColor(oldColorMod);
+        mBitmap.setModColor(oldColorMod);
 
         // Return whether or not rendering was successful.
         return wasRenderSuccessful;
@@ -123,10 +119,10 @@ namespace Jit {
     }
 
     void JitSpriteSet::setColor(const SDL_Color &color) {
-        if (!mBitmap)
+        if ((mBitmap.getHeight() == 0) || (mBitmap.getWidth() == 0))
             return;
 
-        mBitmap->setModColor(color);
+        mBitmap.setModColor(color);
     }
 
     uint JitSpriteSet::getNTiles() const {
@@ -134,6 +130,6 @@ namespace Jit {
     }
 
     void JitSpriteSet::setRenderer(SDL_Renderer *renderer) {
-        mBitmap->setRenderer(renderer);
+        mBitmap.setRenderer(renderer);
     }
 }
