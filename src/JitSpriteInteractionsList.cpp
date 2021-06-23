@@ -161,6 +161,8 @@ namespace Jit {
         return result;
     }
 
+    /*
+
     std::optional<FrameDef>
     JitSpriteInteractionsList::get(const flat::IntegerCoordinate &cord, Jit::JitDisplayData &dis,
                                    JitFrameDefMap &frameDefs, bool getBackground) {
@@ -185,6 +187,7 @@ namespace Jit {
 
         return std::nullopt;
     }
+     */
 
     std::optional<FrameDef> JitSpriteInteractionsList::getFrameDef(const std::string &name, JitFrameDefMap &frameDefs) {
         Jit::SpriteInteraction resultSI;
@@ -197,7 +200,7 @@ namespace Jit {
         return frameDefs.get(resultSI.dDefault);
     }
 
-    FrameDef JitSpriteInteractionsList::getInteraction(const JitDisplayMaterial &material,
+    /*FrameDef JitSpriteInteractionsList::getInteraction(const JitDisplayMaterial &material,
                                                        const Jit::SpriteInteraction &spriteInteraction,
                                                        Jit::JitDisplayData &dis,
                                                        JitFrameDefMap &frameDefs,
@@ -283,6 +286,7 @@ namespace Jit {
                 return frameDefs.get(spriteInteraction.dDefault);
         }
     }
+     */
 
     std::optional<Jit::SpriteInteraction>
     JitSpriteInteractionsList::getFullSpriteInteraction(const std::string &input) {
