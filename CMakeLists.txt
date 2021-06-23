@@ -36,8 +36,6 @@ set(JitterLibFiles src/JitColorList.h
         src/JitFrameDefMap.h
         src/JitDisplayTile.h
         src/JitDisplayMaterial.h
-        src/JitDisplayData.h
-        src/JitDisplayData.cpp
         src/JitBasics.h)
 
 set(Flat include/FlatLib/FlatMath.h
