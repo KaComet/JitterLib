@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <exception>
 #include <FlatTypes.h>
+#include <SDL.h>
 
 namespace Jit {
     template<class X, class Y>
@@ -99,6 +100,8 @@ namespace Jit {
     inline uint getArrayIndex(const flat::IntegerCoordinate &coordinate, const uint arrayWidth) {
         return coordinate.x + (coordinate.y * arrayWidth);
     }
+
+    void clearRenderer(SDL_Renderer *renderer, SDL_Color clearColor, std::optional<SDL_Rect *> rect);
 }
 
 #endif //WALT_BASICS_H
