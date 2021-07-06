@@ -4,11 +4,6 @@ namespace Jit {
 // Get the path to a file in the resource directory.
 // NOTE: all paths assume that the executable is contained in a directory named "bin".
     std::string getResourcePath(const std::string &subDir) {
-#ifdef _WIN32
-        const char PATH_SEP = '\\';
-#else
-        const char PATH_SEP = '/';
-#endif
         //This will hold the base resource path: Lessons/res/
         //We give it static lifetime so that we'll only need to call
         //SDL_GetBasePath once to get the executable path
@@ -140,6 +135,33 @@ namespace Jit {
             if (((c > ' ') && (c < '~')) || (lastChar == '\\'))
                 result.push_back(c);
             lastChar = c;
+        }
+
+        return result;
+    }
+
+    std::string backOneFile(const std::string &path) {
+        if (path.empty())
+            return path;
+
+        std::string result;
+
+        unsigned int nPathSeps = 0;
+        for (char c : path) {
+            if (c == PATH_SEP)
+                nPathSeps++;
+        }
+
+        unsigned int cSep = 0;
+        for (char c : path) {
+            if (c == PATH_SEP) {
+                cSep++;
+            }
+
+            result.push_back(c);
+
+            if (cSep == nPathSeps)
+                break;
         }
 
         return result;

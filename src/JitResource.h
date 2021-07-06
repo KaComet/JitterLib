@@ -7,6 +7,12 @@
 #include <SDL.h>
 
 namespace Jit {
+#ifdef _WIN32
+    const char PATH_SEP = '\\';
+#else
+    const char PATH_SEP = '/';
+#endif
+
     std::string getResourcePath(const std::string &subDir);
 
     std::string getDelimitedContents(const std::string &input, char DelimitingChar, unsigned int start);
@@ -19,6 +25,8 @@ namespace Jit {
                                         uint capsuleNumber);
 
     std::string clearWhiteSpace(const std::string &input);
+
+    std::string backOneFile(const std::string &path);
 }
 
 #endif //WELT_RESOURCE_H

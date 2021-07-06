@@ -11,9 +11,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Modules")
 find_package(SDL2 REQUIRED COMPONENTS main)
 find_package(SDL2_image REQUIRED COMPONENTS main)
+find_package(SDL2_mixer REQUIRED COMPONENTS main)
 
 # Define executable target.
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS}
+        ${SDL2_MIXER_INCLUDE_DIRS}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2main_INCLUDE_DIRS}
         ${CMAKE_BINARY_DIR}
@@ -36,7 +38,9 @@ set(JitterLibFiles src/JitColorList.h
         src/JitFrameDefMap.h
         src/JitDisplayTile.h
         src/JitDisplayMaterial.h
-        src/JitBasics.h)
+        src/JitBasics.h
+        src/JitSoundTrack.cpp
+        src/JitSoundTrack.h)
 
 set(Flat include/FlatLib/FlatMath.h
         include/FlatLib/FlatTypes.h
@@ -48,7 +52,7 @@ set(Flat include/FlatLib/FlatMath.h
         include/FlatLib/HappyArray.h)
 
 add_executable(JitterLib_TilesetViewerMain Examples/TilesetViewerMain.cpp ${JitterLibFiles} ${Flat})
-target_link_libraries(JitterLib_TilesetViewerMain ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES})
+target_link_libraries(JitterLib_TilesetViewerMain ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
 
 add_executable(JitterLib_SimpleLoad Examples/SimpleLoad.cpp ${JitterLibFiles} ${Flat})
-target_link_libraries(JitterLib_SimpleLoad ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES})
+target_link_libraries(JitterLib_SimpleLoad ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
