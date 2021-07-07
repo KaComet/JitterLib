@@ -33,8 +33,12 @@ namespace Jit {
             return colors[i];
         }
 
-        [[nodiscard]] SDL_Color getFromTime(long double secondsCounter) const {
-            unsigned int i = (unsigned int) (secondsCounter * colorsPerSecond) % nColors;
+        [[nodiscard]] SDL_Color getFromTime(long double secondsCounter, long double offset) const {
+            unsigned int i;
+            if (colorsPerSecond > 0)
+                i = (unsigned int) ((secondsCounter + offset) * colorsPerSecond) % nColors;
+            else
+                i = (unsigned int) offset % nColors;
             if (i >= nColors)
                 throw std::out_of_range("");
 
