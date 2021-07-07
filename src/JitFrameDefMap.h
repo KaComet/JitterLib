@@ -26,11 +26,15 @@ namespace Jit {
             return frames[i];
         }
 
-        [[nodiscard]] Jit::FrameID getFromTime(long double secondsCounter) const {
+        [[nodiscard]] Jit::FrameID getFromTime(long double secondsCounter, long double offset) const {
             if (nFrames == 0)
                 throw std::runtime_error("");
 
-            unsigned int i = (unsigned int) (secondsCounter * FPS) % nFrames;
+            unsigned int i;
+            if (FPS > 0)
+                i = (unsigned int) ((secondsCounter + offset) * FPS) % nFrames;
+            else
+                i = (unsigned int) (offset) % nFrames;
 
             if (i >= nFrames)
                 throw std::out_of_range("");
