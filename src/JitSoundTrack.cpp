@@ -1,10 +1,16 @@
 #include "JitSoundTrack.h"
 
 bool Jit::JitSoundTrack::playSound(const std::string &soundName) {
-    return false;
+    try {
+        Mix_Chunk *sound = sounds.at(soundName);
+        return !Mix_PlayChannel(-1, sound, 0);
+    } catch (std::out_of_range &e) {
+        return false;
+    }
 }
 
 bool Jit::JitSoundTrack::playMusic(const std::string &musicName, std::optional<FadeOutIn> fadeInOut) {
+    //TODO: Add fading.
     try {
         Mix_Music *track = music.at(musicName);
         return !Mix_PlayMusic(track, 0);
@@ -20,7 +26,7 @@ bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
     const std::string tag = "sounds";
     unsigned int nLoaded = 0;
 
-    sounds.clear();
+    unloadSounds();
 
     // Determine the fileName of the resource.
     std::string path = getResourcePath("") + fileName;
@@ -173,7 +179,7 @@ bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
     const std::string tag = "music";
     unsigned int nLoaded = 0;
 
-    sounds.clear();
+    unloadMusic();
 
     // Determine the fileName of the resource.
     std::string path = getResourcePath("") + fileName;
@@ -317,6 +323,25 @@ bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
     inputFile.close();
 
     return true;
+}
+
+void Jit::JitSoundTrack::unloadAll() {
+    unloadMusic();
+    unloadSounds();
+}
+
+void Jit::JitSoundTrack::unloadMusic() {
+    for (const auto& t : music)
+        Mix_FreeMusic(t.second);
+
+    music.clear();
+}
+
+void Jit::JitSoundTrack::unloadSounds() {
+    for (const auto& s : sounds)
+        Mix_FreeChunk(s.second);
+
+    sounds.clear();
 }
 
 bool Jit::JitSoundTrack::isMultiLine(const std::string &input) {

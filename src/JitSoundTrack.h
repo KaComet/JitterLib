@@ -43,8 +43,14 @@ namespace Jit {
 
         bool loadMusic(const std::string &fileName);
 
+        void unloadAll();
+
+        void unloadMusic();
+
+        void unloadSounds();
+
     private:
-        bool isMultiLine(const std::string &input);
+        static bool isMultiLine(const std::string &input);
 
         static std::pair<std::string, std::optional<Mix_Chunk *>> loadSoundFromPath(const std::string &input, const std::string &basePath);
 
