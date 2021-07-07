@@ -18,6 +18,8 @@ namespace Jit {
 
         void unpause();
 
+        void restart();
+
         //Gets the timer's time
         [[nodiscard]] Uint32 getTicks() const;
 

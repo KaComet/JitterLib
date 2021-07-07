@@ -60,6 +60,11 @@ namespace Jit {
         }
     }
 
+    void JitLTimer::restart() {
+        stop();
+        start();
+    }
+
     Uint32 JitLTimer::getTicks() const {
         //The actual timer time
         Uint32 time = 0;
