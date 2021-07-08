@@ -33,8 +33,6 @@ namespace Jit {
                 JitFrameDefMap newDef;
 
                 // NOTE: line numbers start at one.
-                lineNumber++;
-
                 // Load the current line.
                 currentLine = "";
                 do {
@@ -43,7 +41,7 @@ namespace Jit {
                     std::string tmp;
                     std::getline(inputFile, tmp);
                     //lineNumber++;
-                    tmp = clearWhiteSpace(tmp);
+                    //tmp = clearWhiteSpace(tmp);
                     currentLine.append(tmp);
                 } while (isMultiLine(currentLine));
 

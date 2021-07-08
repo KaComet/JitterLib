@@ -33,7 +33,7 @@ namespace Jit {
                     std::string tmp;
                     std::getline(inputFile, tmp);
                     //lineNumber++;
-                    tmp = clearWhiteSpace(tmp);
+                    //tmp = clearWhiteSpace(tmp);
                     currentLine.append(tmp);
                 } while (isMultiLine(currentLine));
 
