@@ -47,7 +47,7 @@ namespace Jit {
                     currentLine.append(tmp);
                 } while (isMultiLine(currentLine));
 
-                if (currentLine.empty())
+                if (currentLine.empty() || (flat::getFirstNonWhitespace(currentLine) == '@'))
                     continue;
 
                 /* If the current line contains a LOADING_START_STRING, enable

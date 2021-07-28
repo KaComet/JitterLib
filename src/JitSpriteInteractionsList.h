@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <optional>
 #include <FlatTypes.h>
+#include <FlatMath.h>
 #include "JitResource.h"
 #include "JitBasics.h"
 #include "JitDisplayTile.h"

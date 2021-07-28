@@ -11,6 +11,7 @@
 #include "JitResource.h"
 #include <map>
 #include <HappyArray.h>
+#include <FlatMath.h>
 
 namespace Jit {
     struct ColorDef {

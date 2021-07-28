@@ -2,6 +2,7 @@
 #define TILESETVIEWER_FRAMEDEFMAP_H
 
 #include <FlatVector.h>
+#include <FlatMath.h>
 #include <string>
 #include "JitUIBasics.h"
 #include <fstream>
