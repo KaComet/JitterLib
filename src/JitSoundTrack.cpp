@@ -20,9 +20,6 @@ bool Jit::JitSoundTrack::playMusic(const std::string &musicName, std::optional<F
 }
 
 bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
-    const std::string LOADING_START_STRING = "$BEGIN_SOUND_DEF";
-    const std::string LOADING_END_STRING = "$END_SOUND_DEF";
-    const std::string SI_COMMAND_STR = "|--SoundDef-->";
     const std::string tag = "sounds";
     unsigned int nLoaded = 0;
 
@@ -43,18 +40,18 @@ bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
 
     const std::string pathBackOne = backOneFile(path);
 
+#pragma clang diagnostic push // Clang is being temperamental
+#pragma ide diagnostic ignored "UnreachableCode"
     // If the file could be opened, start loading the file. If not, return false.
     if (inputFile.is_open()) {
         unsigned int lineNumber = 0;
         bool isLoadingEnabled = false;
 
+#pragma clang diagnostic push // Clang is being temperamental
+#pragma ide diagnostic ignored "EndlessLoop"
         while (!inputFile.eof()) {
             bool lineLoaded = false;
             std::string currentLine;
-            Mix_Chunk newDef;
-
-            // NOTE: line numbers start at one.
-            lineNumber++;
 
             // Load the current line.
             currentLine = "";
@@ -63,47 +60,19 @@ bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
                 lineNumber++;
                 std::string tmp;
                 std::getline(inputFile, tmp);
-                //lineNumber++;
                 tmp = clearWhiteSpace(tmp);
                 currentLine.append(tmp);
             } while (isMultiLine(currentLine));
 
-            if (currentLine.empty())
+            // Check if the current line is a comment. if so, skip.
+            if (currentLine.empty() || (flat::getFirstNonWhitespace(currentLine) == '@'))
                 continue;
 
-            /* If the current line contains a LOADING_START_STRING, enable
-             *   loading. Unless, loading is already enabled. In that
-             *   case, print an error message and skip this line. */
-            if (currentLine == LOADING_START_STRING) {
-                if (isLoadingEnabled) {
-                    printf("   * Line %u is not formatted correctly. Contains %s even though one has been declared earlier in the file. Skipping.\n",
-                           lineNumber, LOADING_START_STRING.c_str());
-                    continue;
-                } else {
-                    isLoadingEnabled = true;
-                    continue;
-                }
-            }
-
-            /* If the current line contains a LOADING_END_STRING, disable
-             *   loading. Unless, loading is already disabled. In that
-             *   case, print an error message and skip this line. */
-            if (currentLine == LOADING_END_STRING) {
-                if (isLoadingEnabled) {
-                    isLoadingEnabled = false;
-                    continue;
-                } else {
-                    //printf("   * Line %u is not formatted correctly. Contains %s even though a %s hasn't been declared earlier in the file. Skipping.\n",
-                    //       lineNumber, LOADING_END_STRING.c_str(), LOADING_START_STRING.c_str());
-                    continue;
-                }
-            }
-
-            /* If the current line contains a LOADING_START_STRING, enable
-             *   loading. Unless, loading is already enabled. In that
-             *   case, print an error message. */
-            const size_t startString = currentLine.find(LOADING_START_STRING);
-            if (startString != std::string::npos) {
+            /* If the current line contains the start directive, enable
+                 *   loading. Unless, loading is already enabled. In that
+                 *   case, print an error message. */
+            const size_t startStringPos = currentLine.find(LOADING_START_STRING);
+            if (startStringPos != std::string::npos) {
                 std::string thisTag;
                 try {
                     thisTag = getEncapsulatedContents(currentLine, '<', '>', 0);
@@ -111,6 +80,8 @@ bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
                     thisTag = "";
                 }
 
+                /* Try and get the tag. if one is present, enable loading. if not,
+                 *   keep loading disabled and print an error message. */
                 if (thisTag == tag) {
                     if (isLoadingEnabled) {
                         printf("   * Line %u is attempting to load to %s, while %s is being loaded.\n", lineNumber,
@@ -122,31 +93,43 @@ bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
                 }
             }
 
+            /* If the current line contains the end directive, disable
+             *   loading. Unless, loading is already disabled. In that
+             *   case, skip this line. */
+            if (currentLine == LOADING_END_STRING) {
+                if (isLoadingEnabled) {
+                    isLoadingEnabled = false;
+                    continue;
+                } else
+                    continue;
+            }
+
+            // If we are within a sound definition directive, start trying to load data.
             if (isLoadingEnabled) {
+                // Search for the sound definition command
+                size_t cPos = currentLine.find(SD_COMMAND_STR);
 
-                // Search for the SI directive.
-                size_t cPos = currentLine.find(SI_COMMAND_STR);
-
-                // If the line doesn't contain a SI directive, skip this line.
+                // If the line doesn't contain a sound definition command, skip this line.
                 if (cPos == std::string::npos)
                     continue;
 
-                // Try to get the SI of the current line
-                std::pair<std::string, std::optional<Mix_Chunk *>> resultOpt = loadSoundFromPath(currentLine, pathBackOne);
+                // Try to get the sound of the current line
+                std::pair<std::string, std::optional<Mix_Chunk *>> resultOpt = loadSoundFromPath(currentLine,
+                                                                                                 pathBackOne);
 
-                // If the SI exists, add it to storage.
+                // If the sound exists, add it to storage.
                 if (resultOpt.second.has_value()) {
                     Mix_Chunk *&result = resultOpt.second.value();
                     const std::string resultName = resultOpt.first;
 
-                    /* Add the SI to storage. Check is a pair. The second
+                    /* Add the sound to storage. Check is a pair. The second
                      *   element is a bool that indicates if the insert
                      *   was successful. */
                     auto check = sounds.emplace(resultName, result);
 
-                    // If the SI could not be added, print an error message.
+                    // If the sound could not be added, print an error message.
                     if (!check.second) {
-                        printf("   * Line %u is attempting to redefine an already defined SI Skipping.\n",
+                        printf("   * Line %u is attempting to redefine an already defined sound Skipping.\n",
                                lineNumber);
                     }
 
@@ -158,24 +141,28 @@ bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
                 }
             }
         }
+
+        inputFile.close();
     } else {
         // If the file could not be loaded, notify the user and return false.
         printf("   * Could not open the file \"%s\"\n", fileName.c_str());
         return false;
     }
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop
 
-    // When done loading the file, print how many SIs were loaded and return true.
-    printf("   Loaded %u sounds.\n", nLoaded);
-
-    inputFile.close();
-
-    return true;
+    // Print how many sounds were loaded. If none were loaded, indicate so.
+    if (nLoaded) {
+        // When done loading the file, print how many sound definitions were loaded and return true.
+        printf("   Loaded %u sounds.\n", nLoaded);
+        return true;
+    } else {
+        printf("   Was not able to load any sounds from the file.\n");
+        return false;
+    }
 }
 
 bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
-    const std::string LOADING_START_STRING = "$BEGIN_SOUND_DEF";
-    const std::string LOADING_END_STRING = "$END_SOUND_DEF";
-    const std::string SI_COMMAND_STR = "|--MusicDef-->";
     const std::string tag = "music";
     unsigned int nLoaded = 0;
 
@@ -196,67 +183,40 @@ bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
 
     const std::string pathBackOne = backOneFile(path);
 
+#pragma clang diagnostic push // Clang is being temperamental
+#pragma ide diagnostic ignored "UnreachableCode"
     // If the file could be opened, start loading the file. If not, return false.
     if (inputFile.is_open()) {
         unsigned int lineNumber = 0;
         bool isLoadingEnabled = false;
 
+#pragma clang diagnostic push // Clang is being temperamental
+#pragma ide diagnostic ignored "EndlessLoop"
         while (!inputFile.eof()) {
             bool lineLoaded = false;
             std::string currentLine;
-            Mix_Chunk newDef;
 
-            // NOTE: line numbers start at one.
-            lineNumber++;
-
-            // Load the current line.
+            /* Load the current line. If the current line ends in ellipses, indicating a
+             *   multi-line, continue loading until the line is complete (no more ellipses.) */
             currentLine = "";
             do {
                 // NOTE: line numbers start at one.
                 lineNumber++;
                 std::string tmp;
                 std::getline(inputFile, tmp);
-                //lineNumber++;
                 tmp = clearWhiteSpace(tmp);
                 currentLine.append(tmp);
-            } while (isMultiLine(currentLine));
+            } while (isMultiLine(currentLine) || (flat::getFirstNonWhitespace(currentLine) == '@'));
 
-            if (currentLine.empty())
+            // Check if the current line is a comment. if so, skip.
+            if (currentLine.empty() || (flat::getFirstNonWhitespace(currentLine) == '@'))
                 continue;
 
-            /* If the current line contains a LOADING_START_STRING, enable
-             *   loading. Unless, loading is already enabled. In that
-             *   case, print an error message and skip this line. */
-            if (currentLine == LOADING_START_STRING) {
-                if (isLoadingEnabled) {
-                    printf("   * Line %u is not formatted correctly. Contains %s even though one has been declared earlier in the file. Skipping.\n",
-                           lineNumber, LOADING_START_STRING.c_str());
-                    continue;
-                } else {
-                    isLoadingEnabled = true;
-                    continue;
-                }
-            }
-
-            /* If the current line contains a LOADING_END_STRING, disable
-             *   loading. Unless, loading is already disabled. In that
-             *   case, print an error message and skip this line. */
-            if (currentLine == LOADING_END_STRING) {
-                if (isLoadingEnabled) {
-                    isLoadingEnabled = false;
-                    continue;
-                } else {
-                    //printf("   * Line %u is not formatted correctly. Contains %s even though a %s hasn't been declared earlier in the file. Skipping.\n",
-                    //       lineNumber, LOADING_END_STRING.c_str(), LOADING_START_STRING.c_str());
-                    continue;
-                }
-            }
-
-            /* If the current line contains a LOADING_START_STRING, enable
-             *   loading. Unless, loading is already enabled. In that
-             *   case, print an error message. */
-            const size_t startString = currentLine.find(LOADING_START_STRING);
-            if (startString != std::string::npos) {
+            /* If the current line contains the start directive, enable
+                 *   loading. Unless, loading is already enabled. In that
+                 *   case, print an error message. */
+            const size_t startStringPos = currentLine.find(LOADING_START_STRING);
+            if (startStringPos != std::string::npos) {
                 std::string thisTag;
                 try {
                     thisTag = getEncapsulatedContents(currentLine, '<', '>', 0);
@@ -264,6 +224,8 @@ bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
                     thisTag = "";
                 }
 
+                /* Try and get the tag. if one is present, enable loading. if not,
+                 *   keep loading disabled and print an error message. */
                 if (thisTag == tag) {
                     if (isLoadingEnabled) {
                         printf("   * Line %u is attempting to load to %s, while %s is being loaded.\n", lineNumber,
@@ -275,31 +237,43 @@ bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
                 }
             }
 
+            /* If the current line contains the end directive, disable
+                 *   loading. Unless, loading is already disabled. In that
+                 *   case, skip this line. */
+            if (currentLine == LOADING_END_STRING) {
+                if (isLoadingEnabled) {
+                    isLoadingEnabled = false;
+                    continue;
+                } else
+                    continue;
+            }
+
+            // If we are within a sound definition directive, start trying to load data.
             if (isLoadingEnabled) {
+                // Search for the music definition command.
+                size_t cPos = currentLine.find(MD_COMMAND_STR);
 
-                // Search for the SI directive.
-                size_t cPos = currentLine.find(SI_COMMAND_STR);
-
-                // If the line doesn't contain a SI directive, skip this line.
+                // If the line doesn't contain a music definition command, skip this line.
                 if (cPos == std::string::npos)
                     continue;
 
-                // Try to get the SI of the current line
-                std::pair<std::string, std::optional<Mix_Music *>> resultOpt = loadTrackFromPath(currentLine, pathBackOne);
+                // Try to get the track of the current line
+                std::pair<std::string, std::optional<Mix_Music *>> resultOpt = loadTrackFromPath(currentLine,
+                                                                                                 pathBackOne);
 
-                // If the SI exists, add it to storage.
+                // If the track exists, add it to storage.
                 if (resultOpt.second.has_value()) {
                     Mix_Music *&result = resultOpt.second.value();
                     const std::string resultName = resultOpt.first;
 
-                    /* Add the SI to storage. Check is a pair. The second
+                    /* Add the track to storage. Check is a pair. The second
                      *   element is a bool that indicates if the insert
                      *   was successful. */
                     auto check = music.emplace(resultName, result);
 
-                    // If the SI could not be added, print an error message.
+                    // If the track could not be added, print an error message.
                     if (!check.second) {
-                        printf("   * Line %u is attempting to redefine an already defined SI Skipping.\n",
+                        printf("   * Line %u is attempting to redefine an already defined track Skipping.\n",
                                lineNumber);
                     }
 
@@ -311,18 +285,25 @@ bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
                 }
             }
         }
+
+        inputFile.close();
     } else {
         // If the file could not be loaded, notify the user and return false.
         printf("   * Could not open the file \"%s\"\n", fileName.c_str());
         return false;
     }
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop
 
-    // When done loading the file, print how many SIs were loaded and return true.
-    printf("   Loaded %u tracks.\n", nLoaded);
-
-    inputFile.close();
-
-    return true;
+    // Print how many tracks were loaded. If none were loaded, indicate so.
+    if (nLoaded) {
+        // When done loading the file, print how many music definitions were loaded and return true.
+        printf("   Loaded %u tracks.\n", nLoaded);
+        return true;
+    } else {
+        printf("   Was not able to load any tracks from the file.\n");
+        return false;
+    }
 }
 
 void Jit::JitSoundTrack::unloadAll() {
@@ -331,14 +312,14 @@ void Jit::JitSoundTrack::unloadAll() {
 }
 
 void Jit::JitSoundTrack::unloadMusic() {
-    for (const auto& t : music)
+    for (const auto &t : music)
         Mix_FreeMusic(t.second);
 
     music.clear();
 }
 
 void Jit::JitSoundTrack::unloadSounds() {
-    for (const auto& s : sounds)
+    for (const auto &s : sounds)
         Mix_FreeChunk(s.second);
 
     sounds.clear();
@@ -353,7 +334,8 @@ bool Jit::JitSoundTrack::isMultiLine(const std::string &input) {
     return (input[max - 1] == '.') && (input[max - 2] == '.') && (input[max - 3] == '.');
 }
 
-std::pair<std::string, std::optional<Mix_Chunk *>> Jit::JitSoundTrack::loadSoundFromPath(const std::string &input, const std::string &basePath) {
+std::pair<std::string, std::optional<Mix_Chunk *>>
+Jit::JitSoundTrack::loadSoundFromPath(const std::string &input, const std::string &basePath) {
     std::pair<std::string, std::optional<Mix_Chunk *>> result;
     bool loadGood = true;
 
@@ -388,7 +370,8 @@ std::pair<std::string, std::optional<Mix_Chunk *>> Jit::JitSoundTrack::loadSound
     return result;
 }
 
-std::pair<std::string, std::optional<Mix_Music *>> Jit::JitSoundTrack::loadTrackFromPath(const std::string &input, const std::string &basePath) {
+std::pair<std::string, std::optional<Mix_Music *>>
+Jit::JitSoundTrack::loadTrackFromPath(const std::string &input, const std::string &basePath) {
     std::pair<std::string, std::optional<Mix_Music *>> result;
     bool loadGood = true;
 

@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <SDL.h>
 #include <SDL_mixer.h>
+#include <FlatMath.h>
 
 #include "JitResource.h"
 
@@ -50,6 +51,11 @@ namespace Jit {
         void unloadSounds();
 
     private:
+        const std::string LOADING_START_STRING = "$BEGIN_SOUND_DEF"; // Sound definition start directive
+        const std::string LOADING_END_STRING = "$END_SOUND_DEF"; // Sound definition end directive
+        const std::string SD_COMMAND_STR = "|--SoundDef-->"; // Sound definition command
+        const std::string MD_COMMAND_STR = "|--MusicDef-->"; // Music definition command
+
         static bool isMultiLine(const std::string &input);
 
         static std::pair<std::string, std::optional<Mix_Chunk *>> loadSoundFromPath(const std::string &input, const std::string &basePath);

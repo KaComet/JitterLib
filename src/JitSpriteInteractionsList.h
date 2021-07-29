@@ -39,6 +39,10 @@ namespace Jit {
         FrameDef &getFrameDef(const std::string &name, JitFrameDefMap &frameDefs, Jit::FrameDef &errorFrame);
 
     private:
+        const std::string LOADING_START_STRING = "$BEGIN_SPRITE_INTERACTIONS_DEF";
+        const std::string LOADING_END_STRING = "$END_SPRITE_INTERACTIONS_DEF";
+        const std::string SI_COMMAND_STR = "|--SpriteInteraction-->";
+
         // Returns the SpriteInteraction for the given material.
         [[nodiscard]] std::optional<Jit::SpriteInteraction> getSI(const JitDisplayMaterial &material);
 

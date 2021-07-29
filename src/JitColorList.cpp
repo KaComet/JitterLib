@@ -4,11 +4,9 @@ namespace Jit {
 // Loads the colors defined from the given file name into the given JitColorList.
 // If the file could not be opened, the function returns false.
     bool JitColorList::loadColorsFromFile(const std::string &fileName, const std::string &tag) {
-        const std::string LOADING_START_STRING = "$BEGIN_COLORS";
-        const std::string LOADING_END_STRING = "$END_COLORS";
-        const std::string COLOR_COMMAND_STR = "|--ColorDef-->";
         unsigned int nLoaded = 0;
 
+        // Clear any previously stored color definitions.
         colorDefinitions.clear();
 
         // Determine the path of the resource.
@@ -27,34 +25,32 @@ namespace Jit {
         // If the file could be opened, start loading the file. If not, return false.
         if (inputFile.is_open()) {
             unsigned int lineNumber = 0;
+
+            // This will indicate if the line being loaded is within a frame definition directive
             bool isLoadingEnabled = false;
 
             while (!inputFile.eof()) {
-                bool lineLoaded = false;
                 std::string currentLine;
-                ColorDef newDef;
 
-                // NOTE: line numbers start at one.
-                // Load the current line.
-                currentLine = "";
+                /* Load the current line. If the current line ends in ellipses, indicating a
+                 *   multi-line, continue loading until the line is complete (no more ellipses.) */
                 do {
                     // NOTE: line numbers start at one.
                     lineNumber++;
                     std::string tmp;
                     std::getline(inputFile, tmp);
-                    //lineNumber++;
-                    //tmp = clearWhiteSpace(tmp);
                     currentLine.append(tmp);
                 } while (isMultiLine(currentLine));
 
+                // Check if the current line is a comment. if so, skip.
                 if (currentLine.empty() || (flat::getFirstNonWhitespace(currentLine) == '@'))
                     continue;
 
-                /* If the current line contains a LOADING_START_STRING, enable
+                /* If the current line contains the start directive, enable
                  *   loading. Unless, loading is already enabled. In that
                  *   case, print an error message. */
-                const size_t startString = currentLine.find(LOADING_START_STRING);
-                if (startString != std::string::npos) {
+                const size_t startStringPos = currentLine.find(LOADING_START_STRING);
+                if (startStringPos != std::string::npos) {
                     std::string thisTag;
                     try {
                         thisTag = getEncapsulatedContents(currentLine, '<', '>', 0);
@@ -62,6 +58,8 @@ namespace Jit {
                         thisTag = "";
                     }
 
+                    /* Try and get the tag. if one is present, enable loading. if not,
+                     *   keep loading disabled and print an error message. */
                     if (thisTag == tag) {
                         if (isLoadingEnabled) {
                             printf("   * Line %u is attempting to load to %s, while %s is being loaded.\n", lineNumber,
@@ -73,45 +71,19 @@ namespace Jit {
                     }
                 }
 
-                /* If the current line contains a LOADING_END_STRING, disable
+                /* If the current line contains the end directive, disable
                  *   loading. Unless, loading is already disabled. In that
-                 *   case, print an error message and skip this line. */
+                 *   case, skip this line. */
                 if (currentLine == LOADING_END_STRING) {
                     if (isLoadingEnabled) {
                         isLoadingEnabled = false;
                         continue;
-                    } else {
-                        //printf("   * Line %u is not formatted correctly. Contains %s even though a %s hasn't been declared earlier in the file. Skipping.\n",
-                        //       lineNumber, LOADING_END_STRING.c_str(), LOADING_START_STRING.c_str());
+                    } else
                         continue;
-                    }
                 }
 
+                // If we are within a color definition directive, start trying to load data.
                 if (isLoadingEnabled) {
-                    /* If the current line contains a LOADING_START_STRING, enable
-                     *   loading. Unless, loading is already enabled. In that
-                     *   case, print an error message. */
-                    const size_t startString = currentLine.find(LOADING_START_STRING);
-                    if (startString != std::string::npos) {
-                        std::string thisTag;
-                        try {
-                            thisTag = getEncapsulatedContents(currentLine, '<', '>', 0);
-                        } catch (...) {
-                            thisTag = "";
-                        }
-
-                        if (thisTag == tag) {
-                            if (isLoadingEnabled) {
-                                printf("   * Line %u is attempting to load to %s, while %s is being loaded.\n",
-                                       lineNumber,
-                                       thisTag.c_str(), tag.c_str());
-                            } else {
-                                isLoadingEnabled = true;
-                                continue;
-                            }
-                        }
-                    }
-
                     if (isLoadingEnabled) {
                         ColorDef colorDef;
 
@@ -135,36 +107,38 @@ namespace Jit {
                         }
 
 
-                        /* Add the SI to storage. Check is a pair. The second
-                             *   element is a bool that indicates if the insert
-                             *   was successful. */
+                        /* Add the color to storage. Check is a pair. The second
+                         *   element is a bool that indicates if the insert
+                         *   was successful. */
                         auto check = colorDefinitions.emplace(colorDef.name, colorDef);
 
-                        // If the SI could not be added, print an error message.
+                        // If the color could not be added, print an error message.
                         if (!check.second) {
-                            printf("   * Line %u is attempting to redefine an already defined SI Skipping.\n",
+                            printf("   * Line %u is attempting to redefine an already defined color definition Skipping.\n",
                                    lineNumber);
                             continue;
                         }
                         nLoaded++;
-                        lineLoaded = true;
                     }
                 }
             }
+
+            inputFile.close();
         } else {
             // If the file could not be loaded, notify the user and return false.
-            printf("   * Could not open the file \"%s\"\n", path.
-
-                    c_str()
-
-            );
+            printf("   * Could not open the file \"%s\"\n", path.c_str());
             return false;
         }
 
-        // When done loading the file, print how many SIs were loaded and return true.
-        printf("   Loaded %u color definitions.\n", nLoaded);
-
-        return true;
+        // Print how many colors were loaded. If none were loaded, indicate so.
+        if (nLoaded) {
+            // When done loading the file, print how many colors were loaded and return true.
+            printf("   Loaded %u color definitions.\n", nLoaded);
+            return true;
+        } else {
+            printf("   Was not able to load any color definitions from the file.\n");
+            return false;
+        }
     }
 
     ColorDef &JitColorList::get(const std::string &name) {
