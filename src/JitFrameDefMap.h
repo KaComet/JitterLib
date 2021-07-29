@@ -55,6 +55,8 @@ namespace Jit {
 
         FrameDef get(const std::string &name);
 
+        bool checkIfContains(const std::string &name);
+
     private:
         // Gets the frame key from the given string. Returns nothing if it couldn't be found.
         static std::optional<std::string> getFrameKey(const std::string &input);
@@ -68,9 +70,6 @@ namespace Jit {
         static bool isMultiLine(const std::string &input);
 
         std::unordered_map<std::string, FrameDef> _spriteDefMap;
-
-        //TODO: define on load.
-        FrameDef _defaultFrameDef;
     };
 }
 

@@ -187,104 +187,105 @@ namespace Jit {
     }
      */
 
-    std::optional<FrameDef> JitSpriteInteractionsList::getFrameDef(const std::string &name, JitFrameDefMap &frameDefs) {
+    FrameDef JitSpriteInteractionsList::getFrameDef(const std::string &name, JitFrameDefMap &frameDefs,
+                                                    Jit::FrameDef &errorFrame) {
         Jit::SpriteInteraction resultSI;
         try {
             resultSI = SI_list.at(name);
-        } catch (std::out_of_range &e) {
-            return std::nullopt;
-        }
+            if (frameDefs.checkIfContains(resultSI.dDefault))
+                return frameDefs.get(resultSI.dDefault);
+        } catch (std::out_of_range &e) {}
 
-        return frameDefs.get(resultSI.dDefault);
+        return errorFrame;
     }
 
-    /*FrameDef JitSpriteInteractionsList::getInteraction(const JitDisplayMaterial &material,
-                                                       const Jit::SpriteInteraction &spriteInteraction,
-                                                       Jit::JitDisplayData &dis,
-                                                       JitFrameDefMap &frameDefs,
-                                                       const flat::IntegerCoordinate &cord,
-                                                       bool gettingBackground) {
-        unsigned int interactions = 0;
-        try {
-            if (gettingBackground)
-                interactions += (material == dis.at(flat::IntegerCoordinate{cord.x, cord.y + 1}).floorMaterial) << 3;
-            else
-                interactions += (material == dis.at(flat::IntegerCoordinate{cord.x, cord.y + 1}).wallMaterial) << 3;
-        } catch (const std::out_of_range &e) {}
+/*FrameDef JitSpriteInteractionsList::getInteraction(const JitDisplayMaterial &material,
+                                                   const Jit::SpriteInteraction &spriteInteraction,
+                                                   Jit::JitDisplayData &dis,
+                                                   JitFrameDefMap &frameDefs,
+                                                   const flat::IntegerCoordinate &cord,
+                                                   bool gettingBackground) {
+    unsigned int interactions = 0;
+    try {
+        if (gettingBackground)
+            interactions += (material == dis.at(flat::IntegerCoordinate{cord.x, cord.y + 1}).floorMaterial) << 3;
+        else
+            interactions += (material == dis.at(flat::IntegerCoordinate{cord.x, cord.y + 1}).wallMaterial) << 3;
+    } catch (const std::out_of_range &e) {}
 
-        try {
-            if (gettingBackground)
-                interactions += (material == dis.at(flat::IntegerCoordinate{cord.x, cord.y - 1}).floorMaterial) << 2;
-            else
-                interactions += (material == dis.at(flat::IntegerCoordinate{cord.x, cord.y - 1}).wallMaterial) << 2;
-        } catch (const std::out_of_range &e) {
-        }
-
-        try {
-            if (gettingBackground)
-                interactions += (material == dis.at(flat::IntegerCoordinate{cord.x + 1, cord.y}).floorMaterial) << 1;
-            else
-                interactions += (material == dis.at(flat::IntegerCoordinate{cord.x + 1, cord.y}).wallMaterial) << 1;
-        } catch (const std::out_of_range &e) {}
-
-        try {
-            if (gettingBackground)
-                interactions += (material == dis.at(flat::IntegerCoordinate{cord.x - 1, cord.y}).floorMaterial) << 0;
-            else
-                interactions += (material == dis.at(flat::IntegerCoordinate{cord.x - 1, cord.y}).wallMaterial) << 0;
-        } catch (const std::out_of_range &e) {}
-
-        switch (interactions) {
-            case 1:
-                return frameDefs.get(spriteInteraction.W);
-                break;
-            case 2:
-                return frameDefs.get(spriteInteraction.E);
-                break;
-            case 3:
-                return frameDefs.get(spriteInteraction.EW);
-                break;
-            case 4:
-                return frameDefs.get(spriteInteraction.S);
-                break;
-            case 5:
-                return frameDefs.get(spriteInteraction.SW);
-                break;
-            case 6:
-                return frameDefs.get(spriteInteraction.SE);
-                break;
-            case 7:
-                return frameDefs.get(spriteInteraction.SEW);
-                break;
-            case 8:
-                return frameDefs.get(spriteInteraction.N);
-                break;
-            case 9:
-                return frameDefs.get(spriteInteraction.NW);
-                break;
-            case 10:
-                return frameDefs.get(spriteInteraction.NE);
-                break;
-            case 11:
-                return frameDefs.get(spriteInteraction.NEW);
-                break;
-            case 12:
-                return frameDefs.get(spriteInteraction.NS);
-                break;
-            case 13:
-                return frameDefs.get(spriteInteraction.NSW);
-                break;
-            case 14:
-                return frameDefs.get(spriteInteraction.NSE);
-                break;
-            case 15:
-                return frameDefs.get(spriteInteraction.NSEW);
-                break;
-            default:
-                return frameDefs.get(spriteInteraction.dDefault);
-        }
+    try {
+        if (gettingBackground)
+            interactions += (material == dis.at(flat::IntegerCoordinate{cord.x, cord.y - 1}).floorMaterial) << 2;
+        else
+            interactions += (material == dis.at(flat::IntegerCoordinate{cord.x, cord.y - 1}).wallMaterial) << 2;
+    } catch (const std::out_of_range &e) {
     }
-     */
+
+    try {
+        if (gettingBackground)
+            interactions += (material == dis.at(flat::IntegerCoordinate{cord.x + 1, cord.y}).floorMaterial) << 1;
+        else
+            interactions += (material == dis.at(flat::IntegerCoordinate{cord.x + 1, cord.y}).wallMaterial) << 1;
+    } catch (const std::out_of_range &e) {}
+
+    try {
+        if (gettingBackground)
+            interactions += (material == dis.at(flat::IntegerCoordinate{cord.x - 1, cord.y}).floorMaterial) << 0;
+        else
+            interactions += (material == dis.at(flat::IntegerCoordinate{cord.x - 1, cord.y}).wallMaterial) << 0;
+    } catch (const std::out_of_range &e) {}
+
+    switch (interactions) {
+        case 1:
+            return frameDefs.get(spriteInteraction.W);
+            break;
+        case 2:
+            return frameDefs.get(spriteInteraction.E);
+            break;
+        case 3:
+            return frameDefs.get(spriteInteraction.EW);
+            break;
+        case 4:
+            return frameDefs.get(spriteInteraction.S);
+            break;
+        case 5:
+            return frameDefs.get(spriteInteraction.SW);
+            break;
+        case 6:
+            return frameDefs.get(spriteInteraction.SE);
+            break;
+        case 7:
+            return frameDefs.get(spriteInteraction.SEW);
+            break;
+        case 8:
+            return frameDefs.get(spriteInteraction.N);
+            break;
+        case 9:
+            return frameDefs.get(spriteInteraction.NW);
+            break;
+        case 10:
+            return frameDefs.get(spriteInteraction.NE);
+            break;
+        case 11:
+            return frameDefs.get(spriteInteraction.NEW);
+            break;
+        case 12:
+            return frameDefs.get(spriteInteraction.NS);
+            break;
+        case 13:
+            return frameDefs.get(spriteInteraction.NSW);
+            break;
+        case 14:
+            return frameDefs.get(spriteInteraction.NSE);
+            break;
+        case 15:
+            return frameDefs.get(spriteInteraction.NSEW);
+            break;
+        default:
+            return frameDefs.get(spriteInteraction.dDefault);
+    }
+}
+ */
 
     std::optional<Jit::SpriteInteraction>
     JitSpriteInteractionsList::getFullSpriteInteraction(const std::string &input) {
@@ -431,4 +432,5 @@ namespace Jit {
 
         return std::optional<Jit::SpriteInteraction>(result);
     }
+
 }

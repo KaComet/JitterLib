@@ -82,14 +82,8 @@ namespace Jit {
                         continue;
                     }
 
-
-                    if (spriteDefMapEntry.frameKey == "default") {
-                        _defaultFrameDef = spriteDefMapEntry;
-                        nLoaded++;
-                    } else {
-                        _spriteDefMap.emplace(spriteDefMapEntry.frameKey, spriteDefMapEntry);
-                        nLoaded++;
-                    }
+                    _spriteDefMap.emplace(spriteDefMapEntry.frameKey, spriteDefMapEntry);
+                    nLoaded++;
                 }
             }
 
@@ -218,13 +212,15 @@ namespace Jit {
     }
 
     FrameDef JitFrameDefMap::get(const std::string &name) {
-        FrameDef result;
-        try {
-            result = _spriteDefMap.at(name);
-        } catch (std::out_of_range &e) {
-            result = _spriteDefMap.at("undefined");
-        }
+        return _spriteDefMap.at(name);
+    }
 
-        return result;
+    bool JitFrameDefMap::checkIfContains(const std::string &name) {
+        try {
+            _spriteDefMap.at(name);
+            return true;
+        } catch (std::out_of_range &e) {
+            return false;
+        }
     }
 }

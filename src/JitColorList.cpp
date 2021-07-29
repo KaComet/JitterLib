@@ -167,16 +167,21 @@ namespace Jit {
         return true;
     }
 
-    std::optional<ColorDef> JitColorList::get(const std::string &name) {
-        ColorDef result;
+    ColorDef JitColorList::get(const std::string &name) {
         try {
-            result = colorDefinitions.at(name);
+            return colorDefinitions.at(name);
         } catch (std::out_of_range &e) {
-            std::cout << "Couldn't find color <" << name << ">." << std::endl;
-            return std::nullopt;
+            throw std::runtime_error("Couldn't find color <" + name + ">.");
         }
+    }
 
-        return result;
+    bool JitColorList::checkIfContains(const std::string &name) {
+        try {
+            colorDefinitions.at(name);
+            return true;
+        } catch (std::out_of_range &e) {
+            return false;
+        }
     }
 
 // Converts a CSS color formatted string to SDL_Color.

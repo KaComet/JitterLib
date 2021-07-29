@@ -59,7 +59,9 @@ namespace Jit {
     public:
         bool loadColorsFromFile(const std::string &fileName, const std::string &tag);
 
-        std::optional<ColorDef> get(const std::string &string);
+        ColorDef get(const std::string &string);
+
+        bool checkIfContains(const std::string &name);
 
     private:
         static SDL_Color getSDL_ColorFromCSS_Color(const std::string &input);
