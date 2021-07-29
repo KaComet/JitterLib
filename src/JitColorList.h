@@ -64,6 +64,10 @@ namespace Jit {
         bool checkIfContains(const std::string &name);
 
     private:
+        const std::string LOADING_START_STRING = "$BEGIN_COLORS"; // Color definition start directive
+        const std::string LOADING_END_STRING = "$END_COLORS"; // Color definition end directive
+        const std::string COLOR_COMMAND_STR = "|--ColorDef-->";
+
         static SDL_Color getSDL_ColorFromCSS_Color(const std::string &input);
 
         static bool stringIsHex(const std::string &input);

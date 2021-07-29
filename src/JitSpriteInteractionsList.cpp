@@ -2,11 +2,9 @@
 
 namespace Jit {
     bool JitSpriteInteractionsList::loadSpriteInteractions(const std::string &fileName, const std::string &tag) {
-        const std::string LOADING_START_STRING = "$BEGIN_SPRITE_INTERACTIONS_DEF";
-        const std::string LOADING_END_STRING = "$END_SPRITE_INTERACTIONS_DEF";
-        const std::string SI_COMMAND_STR = "|--SpriteInteraction-->";
         unsigned int nLoaded = 0;
 
+        // Clear the old definitions.
         SI_list.clear();
 
         // Determine the path of the resource.
@@ -23,60 +21,34 @@ namespace Jit {
         inputFile.open(path);
 
         // If the file could be opened, start loading the file. If not, return false.
+#pragma clang diagnostic push // Clang is being temperamental
+#pragma ide diagnostic ignored "UnreachableCode"
         if (inputFile.is_open()) {
             unsigned int lineNumber = 0;
+
+            // This will indicate if the line being loaded is within a SI definition directive
             bool isLoadingEnabled = false;
 
+#pragma clang diagnostic push // Clang is being temperamental
+#pragma ide diagnostic ignored "EndlessLoop"
             while (!inputFile.eof()) {
-                bool lineLoaded = false;
                 std::string currentLine;
-                JitFrameDefMap newDef;
 
-                // NOTE: line numbers start at one.
-                // Load the current line.
-                currentLine = "";
+                /* Load the current line. If the current line ends in ellipses, indicating a
+                 *   multi-line, continue loading until the line is complete (no more ellipses.) */
                 do {
                     // NOTE: line numbers start at one.
                     lineNumber++;
                     std::string tmp;
                     std::getline(inputFile, tmp);
-                    //lineNumber++;
-                    //tmp = clearWhiteSpace(tmp);
                     currentLine.append(tmp);
                 } while (isMultiLine(currentLine));
 
+                // Check if the current line is a comment. if so, skip.
                 if (currentLine.empty() || (flat::getFirstNonWhitespace(currentLine) == '@'))
                     continue;
 
-                /* If the current line contains a LOADING_START_STRING, enable
-                 *   loading. Unless, loading is already enabled. In that
-                 *   case, print an error message and skip this line. */
-                if (currentLine == LOADING_START_STRING) {
-                    if (isLoadingEnabled) {
-                        printf("   * Line %u is not formatted correctly. Contains %s even though one has been declared earlier in the file. Skipping.\n",
-                               lineNumber, LOADING_START_STRING.c_str());
-                        continue;
-                    } else {
-                        isLoadingEnabled = true;
-                        continue;
-                    }
-                }
-
-                /* If the current line contains a LOADING_END_STRING, disable
-                 *   loading. Unless, loading is already disabled. In that
-                 *   case, print an error message and skip this line. */
-                if (currentLine == LOADING_END_STRING) {
-                    if (isLoadingEnabled) {
-                        isLoadingEnabled = false;
-                        continue;
-                    } else {
-                        //printf("   * Line %u is not formatted correctly. Contains %s even though a %s hasn't been declared earlier in the file. Skipping.\n",
-                        //       lineNumber, LOADING_END_STRING.c_str(), LOADING_START_STRING.c_str());
-                        continue;
-                    }
-                }
-
-                /* If the current line contains a LOADING_START_STRING, enable
+                /* If the current line contains the start directive, enable
                  *   loading. Unless, loading is already enabled. In that
                  *   case, print an error message. */
                 const size_t startString = currentLine.find(LOADING_START_STRING);
@@ -99,6 +71,18 @@ namespace Jit {
                     }
                 }
 
+                /* If the current line contains the end directive, disable
+                 *   loading. Unless, loading is already disabled. In that
+                 *   case, skip this line. */
+                if (currentLine == LOADING_END_STRING) {
+                    if (isLoadingEnabled) {
+                        isLoadingEnabled = false;
+                        continue;
+                    } else
+                        continue;
+                }
+
+                // If we are within a sprite interaction definition directive, start trying to load data.
                 if (isLoadingEnabled) {
 
                     // Search for the SI directive.
@@ -126,7 +110,6 @@ namespace Jit {
                                    lineNumber);
                         }
 
-                        lineLoaded = true;
                         nLoaded++;
                     } else {
                         printf("   * Line %u is not formatted correctly. Skipping\n", lineNumber);
@@ -134,16 +117,25 @@ namespace Jit {
                     }
                 }
             }
+
+            inputFile.close();
         } else {
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop
             // If the file could not be loaded, notify the user and return false.
             printf("   * Could not open the file \"%s\"\n", path.c_str());
             return false;
         }
 
-        // When done loading the file, print how many SIs were loaded and return true.
-        printf("   Loaded %u sprite interactions.\n", nLoaded);
-
-        return true;
+        // Print how many frames were loaded. If none were loaded, indicate so.
+        if (nLoaded) {
+            // When done loading the file, print how many SIs were loaded and return true.
+            printf("   Loaded %u sprite interaction definitions.\n", nLoaded);
+            return true;
+        } else {
+            printf("   Was not able to load any sprite interaction definitions from the file.\n");
+            return false;
+        }
     }
 
     std::optional<Jit::SpriteInteraction> JitSpriteInteractionsList::getSI(const JitDisplayMaterial &material) {
@@ -188,7 +180,7 @@ namespace Jit {
      */
 
     FrameDef &JitSpriteInteractionsList::getFrameDef(const std::string &name, JitFrameDefMap &frameDefs,
-                                                    Jit::FrameDef &errorFrame) {
+                                                     Jit::FrameDef &errorFrame) {
         try {
             Jit::SpriteInteraction &resultSI = SI_list.at(name);
             if (frameDefs.checkIfContains(resultSI.dDefault))

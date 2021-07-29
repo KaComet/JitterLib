@@ -58,6 +58,9 @@ namespace Jit {
         bool checkIfContains(const std::string &name);
 
     private:
+        const std::string LOADING_START_STRING = "$BEGIN_SPRITE_DEF"; // Frame definition start directive.
+        const std::string LOADING_END_STRING = "$END_SPRITE_DEF"; // Frame definition end directive.
+
         // Gets the frame key from the given string. Returns nothing if it couldn't be found.
         static std::optional<std::string> getFrameKey(const std::string &input);
 
