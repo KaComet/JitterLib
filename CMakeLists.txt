@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.17)
 project(JitterLib_TilesetViewerMain)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # Make sure the output binary will be placed in the bin directory.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # Find SDL2 and SDL2_image.
 # sudo apt-get install libsdl2-2.0-0 libsdl2-dev libsdl2-image-dev
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Modules")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 find_package(SDL2 REQUIRED COMPONENTS main)
 find_package(SDL2_image REQUIRED COMPONENTS main)
 find_package(SDL2_mixer REQUIRED COMPONENTS main)

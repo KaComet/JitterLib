@@ -51,6 +51,9 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    // Give the renderer to the spriteset
+    sprites.setRenderer(gRenderer);
+
     // Calculate the required dimensions of the window.
     int nTiles = sprites.getNTiles();
     int heightInTiles = nTiles / ROW_WIDTH;
@@ -184,7 +187,7 @@ bool loadSpriteSetFromFile(SDL_Renderer *renderer, Jit::JitSpriteSet &spriteSet,
     } else {
         path = fileName;
     }
-    const uint NTiles = spriteSet.loadFromFile(renderer, path, TILE_WIDTH, TILE_HEIGHT);
+    const uint NTiles = spriteSet.loadFromFile(path, TILE_WIDTH, TILE_HEIGHT);
 
     // Print the number of elements loaded.
     printf("   Loaded %u tiles\n", NTiles);
