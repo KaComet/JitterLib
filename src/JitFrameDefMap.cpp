@@ -211,7 +211,7 @@ namespace Jit {
         return (input[max - 1] == '.') && (input[max - 2] == '.') && (input[max - 3] == '.');
     }
 
-    FrameDef JitFrameDefMap::get(const std::string &name) {
+    FrameDef &JitFrameDefMap::get(const std::string &name) {
         return _spriteDefMap.at(name);
     }
 

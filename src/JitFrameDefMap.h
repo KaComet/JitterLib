@@ -53,7 +53,7 @@ namespace Jit {
     public:
         bool loadFrameDefs(const std::string &fileName);
 
-        FrameDef get(const std::string &name);
+        FrameDef &get(const std::string &name);
 
         bool checkIfContains(const std::string &name);
 

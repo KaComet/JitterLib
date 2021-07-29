@@ -36,7 +36,7 @@ namespace Jit {
                                     bool gettingBackground);
                                     */
 
-        FrameDef getFrameDef(const std::string &name, JitFrameDefMap &frameDefs, Jit::FrameDef &errorFrame);
+        FrameDef &getFrameDef(const std::string &name, JitFrameDefMap &frameDefs, Jit::FrameDef &errorFrame);
 
     private:
         // Returns the SpriteInteraction for the given material.

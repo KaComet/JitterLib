@@ -167,7 +167,7 @@ namespace Jit {
         return true;
     }
 
-    ColorDef JitColorList::get(const std::string &name) {
+    ColorDef &JitColorList::get(const std::string &name) {
         try {
             return colorDefinitions.at(name);
         } catch (std::out_of_range &e) {

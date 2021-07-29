@@ -59,7 +59,7 @@ namespace Jit {
     public:
         bool loadColorsFromFile(const std::string &fileName, const std::string &tag);
 
-        ColorDef get(const std::string &string);
+        ColorDef &get(const std::string &string);
 
         bool checkIfContains(const std::string &name);
 

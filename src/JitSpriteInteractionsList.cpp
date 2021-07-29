@@ -187,11 +187,10 @@ namespace Jit {
     }
      */
 
-    FrameDef JitSpriteInteractionsList::getFrameDef(const std::string &name, JitFrameDefMap &frameDefs,
+    FrameDef &JitSpriteInteractionsList::getFrameDef(const std::string &name, JitFrameDefMap &frameDefs,
                                                     Jit::FrameDef &errorFrame) {
-        Jit::SpriteInteraction resultSI;
         try {
-            resultSI = SI_list.at(name);
+            Jit::SpriteInteraction &resultSI = SI_list.at(name);
             if (frameDefs.checkIfContains(resultSI.dDefault))
                 return frameDefs.get(resultSI.dDefault);
         } catch (std::out_of_range &e) {}
