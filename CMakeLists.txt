@@ -12,10 +12,12 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 find_package(SDL2 REQUIRED COMPONENTS main)
 find_package(SDL2_image REQUIRED COMPONENTS main)
 find_package(SDL2_mixer REQUIRED COMPONENTS main)
+find_package(SDL2_ttf REQUIRED COMPONENTS main)
 
 # Define executable target.
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS}
         ${SDL2_MIXER_INCLUDE_DIRS}
+        ${SDL2_TTF_INCLUDE_DIRS}
         ${SDL2_INCLUDE_DIRS}
         ${SDL2main_INCLUDE_DIRS}
         ${CMAKE_BINARY_DIR}
@@ -52,7 +54,7 @@ set(Flat include/FlatLib/FlatMath.h
         include/FlatLib/HappyArray.h)
 
 add_executable(JitterLib_TilesetViewerMain Examples/TilesetViewerMain.cpp ${JitterLibFiles} ${Flat})
-target_link_libraries(JitterLib_TilesetViewerMain ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
+target_link_libraries(JitterLib_TilesetViewerMain ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES})
 
-add_executable(JitterLib_SimpleLoad Examples/SimpleLoad.cpp ${JitterLibFiles} ${Flat})
-target_link_libraries(JitterLib_SimpleLoad ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
+add_executable(JitterLib_SimpleLoad Examples/SimpleLoad.cpp ${JitterLibFiles} ${Flat} src/JitFontTextureFactory.cpp src/JitFontTextureFactory.h src/IJitFontRenderedBase.h src/renderedFonts/JitSimpleText.cpp src/renderedFonts/JitSimpleText.h)
+target_link_libraries(JitterLib_SimpleLoad ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES})
