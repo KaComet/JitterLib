@@ -8,7 +8,7 @@
 #include "../src/JitFrameDefMap.h"
 #include "../src/JitSpriteInteractionsList.h"
 #include "../src/JitFontTextureFactory.h"
-#include "../src/IJitFontRenderedBase.h"
+#include "../src/JitIText.h"
 #include "../src/renderedFonts/JitSimpleText.h"
 
 // This simple programs demonstrates loading colors, frame definitions, and sprite interactions and rendering of text.
@@ -40,7 +40,7 @@ int main() {
     fontTextureFactory.loadRenderer(gRenderer);
     fontTextureFactory.loadFont(fontPath, 10);
 
-    std::unique_ptr<IJitFontRenderedBase> text = fontTextureFactory.makeSimpleText("Hello! gjkq...",
+    std::unique_ptr<JitIText> text = fontTextureFactory.makeSimpleText("Hello! gjkq...",
                                                                                    SDL_Color{
                                                                                            0xFF,
                                                                                            0xFF,

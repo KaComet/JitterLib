@@ -18,7 +18,24 @@
 #include "JitFrameDefMap.h"
 
 namespace Jit {
-    const unsigned int CACHE_SIZE = 5;
+    enum InteractionEnum {
+        cccc,
+        cccW,
+        ccEc,
+        ccEW,
+        cScc,
+        cScW,
+        NccW,
+        NScW,
+        Nccc,
+        cSEc,
+        NcEc,
+        NSEc,
+        NScc,
+        cSEW,
+        NcEW,
+        NSEW
+    };
 
     class JitSpriteInteractionsList {
     public:
@@ -36,7 +53,8 @@ namespace Jit {
                                     bool gettingBackground);
                                     */
 
-        FrameDef &getFrameDef(const std::string &name, JitFrameDefMap &frameDefs, Jit::FrameDef &errorFrame);
+        FrameDef &getFrameDef(const std::string &name, JitFrameDefMap &frameDefs, Jit::FrameDef &errorFrame,
+                              InteractionEnum interactions = InteractionEnum::cccc);
 
     private:
         const std::string LOADING_START_STRING = "$BEGIN_SPRITE_INTERACTIONS_DEF";

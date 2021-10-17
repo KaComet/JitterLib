@@ -42,7 +42,13 @@ set(JitterLibFiles src/JitColorList.h
         src/JitDisplayMaterial.h
         src/JitBasics.h
         src/JitSoundTrack.cpp
-        src/JitSoundTrack.h)
+        src/JitSoundTrack.h
+        src/JitFontTextureFactory.cpp
+        src/JitFontTextureFactory.h
+        src/JitIText.h
+        src/renderedFonts/JitSimpleText.cpp
+        src/renderedFonts/JitSimpleText.h
+        )
 
 set(Flat include/FlatLib/FlatMath.h
         include/FlatLib/FlatTypes.h
@@ -56,5 +62,8 @@ set(Flat include/FlatLib/FlatMath.h
 add_executable(JitterLib_TilesetViewerMain Examples/TilesetViewerMain.cpp ${JitterLibFiles} ${Flat})
 target_link_libraries(JitterLib_TilesetViewerMain ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES})
 
-add_executable(JitterLib_SimpleLoad Examples/SimpleLoad.cpp ${JitterLibFiles} ${Flat} src/JitFontTextureFactory.cpp src/JitFontTextureFactory.h src/IJitFontRenderedBase.h src/renderedFonts/JitSimpleText.cpp src/renderedFonts/JitSimpleText.h)
+add_executable(JitterLib_SimpleLoad Examples/SimpleLoad.cpp ${JitterLibFiles} ${Flat})
 target_link_libraries(JitterLib_SimpleLoad ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES})
+
+add_executable(JitterLib_UI_Test Examples/UI_Test.cpp ${JitterLibFiles} ${Flat} src/UI/JitUILabeledFrame.cpp src/UI/JitUILabeledFrame.h src/UI/JitUIFrameFactory.cpp src/UI/JitUIFrameFactory.h src/UI/JitUIIFrameContent.cpp src/UI/JitUIIFrameContent.h src/UI/JitUIIFrame.h)
+target_link_libraries(JitterLib_UI_Test ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES})

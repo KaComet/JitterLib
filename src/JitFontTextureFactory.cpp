@@ -31,8 +31,8 @@ namespace Jit {
 
     }
 
-    std::optional<std::unique_ptr<IJitFontRenderedBase>> JitFontTextureFactory::makeSimpleText(const std::string &text, SDL_Color color) {
-        std::optional<std::unique_ptr<IJitFontRenderedBase>> result = std::nullopt;
+    std::optional<std::unique_ptr<JitIText>> JitFontTextureFactory::makeSimpleText(const std::string &text, SDL_Color color) {
+        std::optional<std::unique_ptr<JitIText>> result = std::nullopt;
         SDL_Texture *texture = nullptr;
         unsigned int w = 0, h = 0;
 
@@ -50,7 +50,7 @@ namespace Jit {
                 w = textSurface->w;
                 h = textSurface->h;
 
-                result = std::optional<std::unique_ptr<IJitFontRenderedBase>>(std::make_unique<JitSimpleText>(texture, renderer, w, h));
+                result = std::optional<std::unique_ptr<JitIText>>(std::make_unique<JitSimpleText>(texture, renderer, w, h));
             }
 
             //Get rid of old surface

@@ -180,11 +180,62 @@ namespace Jit {
      */
 
     FrameDef &JitSpriteInteractionsList::getFrameDef(const std::string &name, JitFrameDefMap &frameDefs,
-                                                     Jit::FrameDef &errorFrame) {
+                                                     Jit::FrameDef &errorFrame, InteractionEnum interactions) {
         try {
             Jit::SpriteInteraction &resultSI = SI_list.at(name);
-            if (frameDefs.checkIfContains(resultSI.dDefault))
-                return frameDefs.get(resultSI.dDefault);
+            std::string &SIName = resultSI.dDefault;
+            switch (interactions) {
+                case cccc:
+                    SIName = resultSI.dDefault;
+                    break;
+                case cccW:
+                    SIName = resultSI.W;
+                    break;
+                case ccEc:
+                    SIName = resultSI.E;
+                    break;
+                case ccEW:
+                    SIName = resultSI.EW;
+                    break;
+                case cScc:
+                    SIName = resultSI.S;
+                    break;
+                case cScW:
+                    SIName = resultSI.SW;
+                    break;
+                case NccW:
+                    SIName = resultSI.NW;
+                    break;
+                case NScW:
+                    SIName = resultSI.NSW;
+                    break;
+                case Nccc:
+                    SIName = resultSI.N;
+                    break;
+                case cSEc:
+                    SIName = resultSI.SE;
+                    break;
+                case NcEc:
+                    SIName = resultSI.NE;
+                    break;
+                case NSEc:
+                    SIName = resultSI.NSE;
+                    break;
+                case NScc:
+                    SIName = resultSI.NS;
+                    break;
+                case cSEW:
+                    SIName = resultSI.SEW;
+                    break;
+                case NcEW:
+                    SIName = resultSI.NEW;
+                    break;
+                case NSEW:
+                    SIName = resultSI.NSEW;
+                    break;
+            }
+            if (frameDefs.checkIfContains(SIName))
+                return frameDefs.get(SIName);
         } catch (std::out_of_range &e) {}
 
         return errorFrame;
@@ -423,5 +474,4 @@ namespace Jit {
 
         return std::optional<Jit::SpriteInteraction>(result);
     }
-
 }

@@ -8,7 +8,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#include "IJitFontRenderedBase.h"
+#include "JitIText.h"
 #include "renderedFonts/JitSimpleText.h"
 #include "JitResource.h"
 
@@ -21,7 +21,7 @@ namespace Jit {
 
         bool loadRenderer(SDL_Renderer *render);
 
-        std::optional<std::unique_ptr<IJitFontRenderedBase>> makeSimpleText(const std::string &text, SDL_Color color);
+        std::optional<std::unique_ptr<JitIText>> makeSimpleText(const std::string &text, SDL_Color color = SDL_Color{255,255,255,255});
 
     private:
         SDL_Renderer *renderer;
