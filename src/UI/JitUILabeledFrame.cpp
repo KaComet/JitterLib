@@ -68,6 +68,6 @@ void Jit::JitUILabeledFrame::setLabelText(const std::string &label) {
 
 }
 
-void Jit::JitUILabeledFrame::setContent(std::unique_ptr<JitUIIFrameContent> frameContent) {
+void Jit::JitUILabeledFrame::setContent(std::shared_ptr<JitUIIFrameContent> frameContent) {
     content = std::move(frameContent);
 }
