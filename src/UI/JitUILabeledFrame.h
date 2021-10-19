@@ -36,12 +36,12 @@ namespace Jit {
 
         void setLabelText(const std::string &label);
 
-        void setContent(std::unique_ptr<JitUIIFrameContent> content);
+        void setContent(std::shared_ptr<JitUIIFrameContent> content);
 
     private:
         std::shared_ptr<JitFontTextureFactory> fontTextureFactory;
         std::unique_ptr<JitIText> text;
-        std::unique_ptr<JitUIIFrameContent> content;
+        std::shared_ptr<JitUIIFrameContent> content;
     };
 }
 
