@@ -53,14 +53,18 @@ int main() {
     frameData.SIName = "border split";
     frameData.renderer = gRenderer;
     frameData.blankingColor = SDL_Color{0,0,0,255};
-
-
     Jit::JitUILabeledFrame frame = Jit::JitUILabeledFrame(frameData, fontTextureFactory, "# Hello! #");
-    frame.clearFrameArea(spriteSet, SDL_Color{0,0,0,255});
-    frame.render(spriteSet, spriteInteractionsList, frameDefMap, colors, 0.0);
 
-    SDL_RenderPresent(gRenderer);
-    SDL_Delay(5000);
+
+    int i = 0;
+    while (1) {
+        frame.setLabelText("# Hello! -" + std::to_string(i++) + " #");
+        frame.clearFrameArea(spriteSet, SDL_Color{0, 0, 0, 255});
+        frame.render(spriteSet, spriteInteractionsList, frameDefMap, colors, 0.0);
+
+        SDL_RenderPresent(gRenderer);
+        SDL_Delay(50);
+    }
 
     TTF_Quit();
     IMG_Quit();
