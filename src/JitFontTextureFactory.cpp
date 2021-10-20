@@ -5,6 +5,12 @@ namespace Jit {
         // Determine the path of the resource.
         const std::string realPath = getResourcePath("") + path;
 
+        // Unload any pre-existing fonts.
+        if (font) {
+            TTF_CloseFont(font);
+            font = nullptr;
+        }
+
         // Attempt to load the font at path from file system.
         font = TTF_OpenFont(realPath.c_str(), (int) sizePts);
 

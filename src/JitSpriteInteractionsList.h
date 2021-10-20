@@ -19,22 +19,22 @@
 
 namespace Jit {
     enum InteractionEnum {
-        cccc,
-        cccW,
-        ccEc,
-        ccEW,
-        cScc,
-        cScW,
-        NccW,
-        NScW,
-        Nccc,
-        cSEc,
-        NcEc,
-        NSEc,
-        NScc,
-        cSEW,
-        NcEW,
-        NSEW
+        cccc = 0,
+        cccW = 1,
+        ccEc = 2,
+        ccEW = 3,
+        cScc = 4,
+        cScW = 5,
+        NccW = 9,
+        NScW = 13,
+        Nccc = 8,
+        cSEc = 6,
+        NcEc = 10,
+        NSEc = 14,
+        NScc = 12,
+        cSEW = 7,
+        NcEW = 11,
+        NSEW = 15
     };
 
     class JitSpriteInteractionsList {
