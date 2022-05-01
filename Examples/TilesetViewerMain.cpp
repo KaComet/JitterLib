@@ -5,7 +5,7 @@
 #include "../src/JitLTimer.h"
 #include <SDL_image.h>
 
-// An example path would be "/basic/tileset.png"
+// An example path would be "../resource/basic/tileset.png"
 
 //TODO: Make texture files define their own parameters.
 const int TILE_WIDTH = 15;
