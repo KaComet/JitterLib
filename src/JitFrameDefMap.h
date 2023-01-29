@@ -6,6 +6,7 @@
 #include <string>
 #include "JitUIBasics.h"
 #include <fstream>
+#include <filesystem>
 #include "JitResource.h"
 #include <vector>
 #include <algorithm>
@@ -51,7 +52,7 @@ namespace Jit {
 
     class JitFrameDefMap {
     public:
-        bool loadFrameDefs(const std::string &fileName);
+        bool loadFrameDefs(const std::filesystem::path &path);
 
         FrameDef &get(const std::string &name);
 

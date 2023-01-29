@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <optional>
+#include <filesystem>
 #include <FlatTypes.h>
 #include <FlatMath.h>
 #include "JitResource.h"
@@ -43,7 +44,7 @@ namespace Jit {
 
         /* Clears the current definitions and loads the definitions
          *   in the given file. Returns true if successful. */
-        bool loadSpriteInteractions(const std::string &fileName, const std::string &tag);
+        bool loadSpriteInteractions(const std::filesystem::path &path, const std::string &tag);
 
         /* When given a DisplayArray and a coordinate, this function will determine the correct
          *   sprite to display for the given tile. */

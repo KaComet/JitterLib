@@ -13,8 +13,6 @@ namespace Jit {
     const char PATH_SEP = '/';
 #endif
 
-    std::string getResourcePath(const std::string &subDir);
-
     std::string getDelimitedContents(const std::string &input, char DelimitingChar, unsigned int start);
 
 /* Extracts the contents from a capsule. Will only extract the contents of top-level capsules (Will not

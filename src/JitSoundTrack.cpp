@@ -19,17 +19,14 @@ bool Jit::JitSoundTrack::playMusic(const std::string &musicName, std::optional<F
     }
 }
 
-bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
+bool Jit::JitSoundTrack::loadSounds(const std::filesystem::path &path) {
     const std::string tag = "sounds";
     unsigned int nLoaded = 0;
 
     unloadSounds();
 
-    // Determine the fileName of the resource.
-    std::string path = getResourcePath("") + fileName;
-
     // If the fileName is empty, return false.
-    if (fileName.empty())
+    if (path.empty())
         return false;
 
     printf("Loading sounds...\n");
@@ -142,7 +139,7 @@ bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
         inputFile.close();
     } else {
         // If the file could not be loaded, notify the user and return false.
-        printf("   * Could not open the file \"%s\"\n", fileName.c_str());
+        printf("   * Could not open the file \"%s\"\n", path.c_str());
         return false;
     }
 #pragma clang diagnostic pop
@@ -159,17 +156,14 @@ bool Jit::JitSoundTrack::loadSounds(const std::string &fileName) {
     }
 }
 
-bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
+bool Jit::JitSoundTrack::loadMusic(const std::filesystem::path &path) {
     const std::string tag = "music";
     unsigned int nLoaded = 0;
 
     unloadMusic();
 
-    // Determine the fileName of the resource.
-    std::string path = getResourcePath("") + fileName;
-
     // If the fileName is empty, return false.
-    if (fileName.empty())
+    if (path.empty())
         return false;
 
     printf("Loading music tracks...\n");
@@ -283,7 +277,7 @@ bool Jit::JitSoundTrack::loadMusic(const std::string &fileName) {
         inputFile.close();
     } else {
         // If the file could not be loaded, notify the user and return false.
-        printf("   * Could not open the file \"%s\"\n", fileName.c_str());
+        printf("   * Could not open the file \"%s\"\n", path.c_str());
         return false;
     }
 #pragma clang diagnostic pop

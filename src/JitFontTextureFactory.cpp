@@ -1,9 +1,7 @@
 #include "JitFontTextureFactory.h"
 
 namespace Jit {
-    bool JitFontTextureFactory::loadFont(const std::string &path, unsigned int sizePts) {
-        // Determine the path of the resource.
-        const std::string realPath = getResourcePath("") + path;
+    bool JitFontTextureFactory::loadFont(const std::filesystem::path &path, unsigned int sizePts) {
 
         // Unload any pre-existing fonts.
         if (font) {
@@ -12,7 +10,7 @@ namespace Jit {
         }
 
         // Attempt to load the font at path from file system.
-        font = TTF_OpenFont(realPath.c_str(), (int) sizePts);
+        font = TTF_OpenFont(path.c_str(), (int) sizePts);
 
         // Check if there was an error while loading.
         if (font == nullptr) {

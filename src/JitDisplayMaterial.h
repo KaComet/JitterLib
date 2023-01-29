@@ -22,7 +22,6 @@ namespace Jit {
     };
 
     const JitDisplayMaterial constMaterialOutOfBound = JitDisplayMaterial{"outofbounds"};
-    const JitDisplayMaterial constMaterialStone = JitDisplayMaterial{"stone"};
 }
 
 #endif //SHEER_MATERIAL_H

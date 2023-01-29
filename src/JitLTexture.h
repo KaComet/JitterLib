@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <string>
+#include <filesystem>
 #include <SDL_image.h>
 #include <iostream>
 #include <optional>
@@ -33,7 +34,7 @@ namespace Jit {
 
         [[nodiscard]] SDL_Color getModColor() const;
 
-        bool setPath(const std::string &path);
+        bool setPath(const std::filesystem::path &path);
 
         bool setRenderer(SDL_Renderer *renderer);
 
@@ -52,7 +53,7 @@ namespace Jit {
         SDL_Surface *mSurface = nullptr;
         SDL_Renderer *mRenderer = nullptr;
 
-        std::optional<std::string> path = std::nullopt;
+        std::filesystem::path path;
 
         //Image dimensions
         int mWidth = 0;

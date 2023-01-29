@@ -1,14 +1,11 @@
 #include "JitSpriteInteractionsList.h"
 
 namespace Jit {
-    bool JitSpriteInteractionsList::loadSpriteInteractions(const std::string &fileName, const std::string &tag) {
+    bool JitSpriteInteractionsList::loadSpriteInteractions(const std::filesystem::path &path, const std::string &tag) {
         unsigned int nLoaded = 0;
 
         // Clear the old definitions.
         SI_list.clear();
-
-        // Determine the path of the resource.
-        std::string path = getResourcePath("") + fileName;
 
         // If the path is empty, return false.
         if (path.empty())

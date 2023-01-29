@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <optional>
 #include <memory>
+#include <filesystem>
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -17,7 +18,7 @@ namespace Jit {
     public:
         JitFontTextureFactory();
 
-        bool loadFont(const std::string &path, unsigned int sizePts);
+        bool loadFont(const std::filesystem::path &path, unsigned int sizePts);
 
         bool loadRenderer(SDL_Renderer *render);
 

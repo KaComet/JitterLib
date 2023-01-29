@@ -15,9 +15,6 @@ namespace Jit {
         JitDisplayTile(const JitDisplayMaterial& floorMaterial, const JitDisplayMaterial& wallMaterial) : floorMaterial(floorMaterial),
                                                                                                           wallMaterial(wallMaterial) {}
     };
-
-    const JitDisplayTile constTileOutOfBound = JitDisplayTile(constMaterialOutOfBound,
-                                                              constMaterialOutOfBound);
 }
 
 #endif //WALT_TILE_H

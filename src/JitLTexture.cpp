@@ -114,7 +114,7 @@ namespace Jit {
         return *this;
     }
 
-    bool JitLTexture::setPath(const std::string &pathh) {
+    bool JitLTexture::setPath(const std::filesystem::path &pathh) {
         path = pathh;
 
         loaded = tryLoad();
@@ -123,15 +123,15 @@ namespace Jit {
     }
 
     bool JitLTexture::tryLoad() {
-        if (mRenderer && path.has_value()) {
+        if (mRenderer && !path.empty()) {
             //Get rid of preexisting texture
             free();
 
             //Load image at specified path
-            mSurface = IMG_Load(path.value().c_str());
+            mSurface = IMG_Load(path.c_str());
 
             if (mSurface == nullptr) {
-                printf("Unable to load image %s! SDL_image Error: %s\n", path.value().c_str(), IMG_GetError());
+                printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
                 return false;
             } else {
                 //Color key image
@@ -140,7 +140,7 @@ namespace Jit {
                 //Create texture from surface pixels
                 mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
                 if (mTexture == nullptr) {
-                    printf("Unable to create texture from %s! SDL Error: %s\n", path.value().c_str(), SDL_GetError());
+                    printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
                 } else {
                     //Get image dimensions
                     mWidth = mSurface->w;

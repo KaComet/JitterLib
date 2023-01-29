@@ -1,14 +1,11 @@
 #include "JitFrameDefMap.h"
 
 namespace Jit {
-    bool JitFrameDefMap::loadFrameDefs(const std::string &fileName) {
+    bool JitFrameDefMap::loadFrameDefs(const std::filesystem::path &path) {
         unsigned int nLoaded = 0;
 
         // Clear the old definitions.
         _spriteDefMap.clear();
-
-        // Determine the path of the resource.
-        std::string path = getResourcePath("") + fileName;
 
         // If the path is empty, return false.
         if (path.empty())

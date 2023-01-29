@@ -13,7 +13,7 @@ namespace Jit {
         free();
     }
 
-    bool JitSpriteSet::loadFromFile(const std::string &path, uint tileWidth, uint tileHeight) {
+    bool JitSpriteSet::loadFromFile(const std::filesystem::path &path, uint tileWidth, uint tileHeight) {
         // Check if all the provided pointers are valid. If not, return false.
         if (path.empty())
             return false;

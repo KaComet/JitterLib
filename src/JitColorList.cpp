@@ -3,14 +3,11 @@
 namespace Jit {
 // Loads the colors defined from the given file name into the given JitColorList.
 // If the file could not be opened, the function returns false.
-    bool JitColorList::loadColorsFromFile(const std::string &fileName, const std::string &tag) {
+    bool JitColorList::loadColorsFromFile(const std::filesystem::path &path, const std::string &tag) {
         unsigned int nLoaded = 0;
 
         // Clear any previously stored color definitions.
         colorDefinitions.clear();
-
-        // Determine the path of the resource.
-        std::string path = getResourcePath("") + fileName;
 
         // If the path is empty, return false.
         if (path.empty())

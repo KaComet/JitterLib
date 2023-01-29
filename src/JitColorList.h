@@ -12,6 +12,7 @@
 #include <map>
 #include <HappyArray.h>
 #include <FlatMath.h>
+#include <filesystem>
 
 namespace Jit {
     struct ColorDef {
@@ -57,7 +58,7 @@ namespace Jit {
 
     class JitColorList {
     public:
-        bool loadColorsFromFile(const std::string &fileName, const std::string &tag);
+        bool loadColorsFromFile(const std::filesystem::path &path, const std::string &tag);
 
         ColorDef &get(const std::string &string);
 

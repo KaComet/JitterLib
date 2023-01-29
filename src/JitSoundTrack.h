@@ -5,6 +5,7 @@
 #include <optional>
 #include <fstream>
 #include <vector>
+#include <filesystem>
 #include <stdexcept>
 #include <memory>
 #include <unordered_map>
@@ -40,9 +41,9 @@ namespace Jit {
 
         bool playMusic(const std::string &musicName, std::optional<FadeOutIn> fadeInOut = std::nullopt);
 
-        bool loadSounds(const std::string &fileName);
+        bool loadSounds(const std::filesystem::path &path);
 
-        bool loadMusic(const std::string &fileName);
+        bool loadMusic(const std::filesystem::path &path);
 
         void unloadAll();
 
