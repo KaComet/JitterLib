@@ -1,5 +1,6 @@
 #include <string>
 #include <memory>
+#include <filesystem>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <FlatTypes.h>
@@ -14,7 +15,7 @@
 #include "../src/renderedFonts/JitSimpleText.h"
 
 std::string path = "Examples/resource/basic/TexturePackData.WDF";
-std::string pathSprites = "/home/verbosek/Projects/Project_21/resource/basic/tileset.png";
+std::string pathSprites = "Examples/resource/basic/tileset.png";
 std::string fontPath = "Examples/resource/basic/luculent.ttf";
 std::string uiTag = "ui";
 
@@ -30,7 +31,11 @@ SDL_Renderer *gRenderer = nullptr;
 
 bool init(int windowWidth, int windowHeight);
 
-int main() {
+int main(int argc, char **argv) {
+    // Set up the resource folder path.
+    std::filesystem::path resourceFolderPath = std::filesystem::path{argv[0]};
+    resourceFolderPath = resourceFolderPath.remove_filename().parent_path().parent_path();
+
     init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     Jit::JitColorList colors;
@@ -40,11 +45,11 @@ int main() {
     Jit::JitSpriteSet spriteSet;
 
     spriteSet.setRenderer(gRenderer);
-    spriteSet.loadFromFile(pathSprites, 15, 15);
-    colors.loadColorsFromFile(path, uiTag);
-    frameDefMap.loadFrameDefs(path);
-    spriteInteractionsList.loadSpriteInteractions(path, uiTag);
-    fontTextureFactory->loadFont(fontPath, 11);
+    spriteSet.loadFromFile(resourceFolderPath / pathSprites, 15, 15);
+    colors.loadColorsFromFile(resourceFolderPath / path, uiTag);
+    frameDefMap.loadFrameDefs(resourceFolderPath / path);
+    spriteInteractionsList.loadSpriteInteractions(resourceFolderPath / path, uiTag);
+    fontTextureFactory->loadFont(resourceFolderPath / fontPath, 11);
     fontTextureFactory->loadRenderer(gRenderer);
 
     Jit::FrameData frameData;
@@ -58,7 +63,7 @@ int main() {
 
     int i = 0;
     while (1) {
-        frame.setLabelText("# Hello! -" + std::to_string(i++) + " #");
+        frame.setLabelText("# Hello! Frame " + std::to_string(i++) + " #");
         frame.clearFrameArea(spriteSet, SDL_Color{0, 0, 0, 255});
         frame.render(spriteSet, spriteInteractionsList, frameDefMap, colors, 0.0);
 

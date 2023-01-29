@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <string>
+#include <filesystem>
 #include "../src/JitSpriteSet.h"
 #include "../src/JitLTimer.h"
 #include <SDL_image.h>
@@ -26,7 +27,7 @@ bool loadSpriteSetFromFile(SDL_Renderer *renderer, Jit::JitSpriteSet &spriteSet,
 void printTileNumber(int x, int y, int tileWidth, int tileHeight, int tilesPerRow);
 
 int main(int argc, char *argv[]) {
-    std::string path;
+    std::filesystem::path path;
     int windowWidth = 10, windowHeight = 10;
     Jit::JitSpriteSet sprites;
 
@@ -173,20 +174,13 @@ bool init(int windowWidth, int windowHeight) {
     return success;
 }
 
-bool loadSpriteSetFromFile(SDL_Renderer *renderer, Jit::JitSpriteSet &spriteSet, const std::string &fileName, bool usingSimpleResourcePath) {
+bool loadSpriteSetFromFile(SDL_Renderer *renderer, Jit::JitSpriteSet &spriteSet, const std::string &path, bool usingSimpleResourcePath) {
     // Check if all the provided pointers are valid. If not, return false.
-    if (fileName.empty())
+    if (path.empty())
         return false;
 
     printf("Loading tiles...\n");
 
-    // Get the path of the JitSpriteSet and load it.
-    std::string path = "";
-    if (usingSimpleResourcePath) {
-        path = Jit::getResourcePath("") + fileName;
-    } else {
-        path = fileName;
-    }
     const uint NTiles = spriteSet.loadFromFile(path, TILE_WIDTH, TILE_HEIGHT);
 
     // Print the number of elements loaded.

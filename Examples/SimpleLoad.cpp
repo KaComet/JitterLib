@@ -2,6 +2,7 @@
 #include <memory>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <filesystem>
 #include <FlatTypes.h>
 
 #include "../src/JitColorList.h"
@@ -29,16 +30,21 @@ SDL_Renderer *gRenderer = nullptr;
 
 bool init(int windowWidth, int windowHeight);
 
-int main() {
+int main(int argc, char **argv) {
+    // Set up the resource folder path.
+    std::filesystem::path resourceFolderPath = std::filesystem::path{argv[0]};
+    resourceFolderPath = resourceFolderPath.remove_filename().parent_path().parent_path();
+
     init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
+    SDL_Color drawColor = SDL_Color{0xFF,0xFF,0xFF,0xFF};
     Jit::JitColorList colors;
     Jit::JitFrameDefMap frameDefMap;
     Jit::JitSpriteInteractionsList spriteInteractionsList;
     Jit::JitFontTextureFactory fontTextureFactory;
 
     fontTextureFactory.loadRenderer(gRenderer);
-    fontTextureFactory.loadFont(fontPath, 10);
+    fontTextureFactory.loadFont(resourceFolderPath / fontPath, 10);
 
     std::unique_ptr<JitIText> text = fontTextureFactory.makeSimpleText("Hello! gjkq...",
                                                                                    SDL_Color{
@@ -46,7 +52,7 @@ int main() {
                                                                                            0xFF,
                                                                                            0xFF,
                                                                                            0xFF}).value();
-    text->renderAt(flat::IntegerCoordinate(0, 0), 0.0);
+    text->renderAt(flat::IntegerCoordinate(0, 0), 0.0, drawColor);
 
     SDL_RenderPresent(gRenderer);
 
